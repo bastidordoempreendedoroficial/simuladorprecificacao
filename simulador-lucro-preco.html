@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Lucro Gratuito — Descubra o Preço Certo do Seu Produto</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:        #FAFAF8;
+  --white:     #FFFFFF;
+  --ink:       #141210;
+  --ink2:      #3A3530;
+  --ink3:      #7A746E;
+  --border:    #E8E3DC;
+  --border2:   #D5CFC7;
+  --green:     #1E6B45;
+  --green-l:   #EAF4EE;
+  --green-m:   #2D9460;
+  --amber:     #A85C00;
+  --amber-l:   #FEF3E2;
+  --red:       #C23B22;
+  --red-l:     #FDEEE9;
+  --accent:    #1E6B45;
+  --radius:    14px;
+  --shadow:    0 4px 24px rgba(0,0,0,.08);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  line-height:1.6;
+}
+
+/* ── HERO ── */
+.hero{
+  background:var(--green);
+  padding:60px 24px 80px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 120%, rgba(255,255,255,.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-block;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  color:rgba(255,255,255,.9);
+  font-size:12px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 16px;border-radius:100px;
+  margin-bottom:24px;
+}
+.hero h1{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(32px,5.5vw,58px);
+  color:#fff;line-height:1.1;
+  max-width:700px;margin:0 auto 16px;
+}
+.hero h1 em{font-style:italic;opacity:.85}
+.hero-sub{
+  color:rgba(255,255,255,.75);
+  font-size:clamp(15px,2vw,18px);
+  max-width:480px;margin:0 auto 0;
+  line-height:1.65;
+}
+
+/* ── PROGRESS ── */
+.progress-bar{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:14px 24px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+}
+.progress-inner{max-width:640px;margin:0 auto}
+.progress-steps{
+  display:flex;align-items:center;gap:0;
+}
+.pstep{
+  display:flex;align-items:center;flex:1;
+}
+.pstep-dot{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--border2);
+  background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--ink3);
+  flex-shrink:0;transition:all .3s;
+}
+.pstep.done .pstep-dot{background:var(--green);border-color:var(--green);color:#fff}
+.pstep.active .pstep-dot{background:var(--ink);border-color:var(--ink);color:#fff}
+.pstep-line{flex:1;height:2px;background:var(--border);transition:background .3s}
+.pstep.done .pstep-line{background:var(--green)}
+.pstep-label{
+  font-size:11px;font-weight:600;color:var(--ink3);
+  margin-left:6px;white-space:nowrap;
+}
+.pstep.active .pstep-label,.pstep.done .pstep-label{color:var(--ink)}
+@media(max-width:480px){.pstep-label{display:none}}
+
+/* ── MAIN ── */
+.main{
+  max-width:640px;margin:0 auto;
+  padding:40px 24px 80px;
+}
+
+/* ── CARD ── */
+.card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:32px;
+  box-shadow:var(--shadow);
+  margin-bottom:20px;
+}
+@media(max-width:480px){.card{padding:24px 18px}}
+
+.card-title{
+  font-family:'DM Serif Display',serif;
+  font-size:22px;color:var(--ink);
+  margin-bottom:6px;line-height:1.2;
+}
+.card-desc{
+  font-size:14px;color:var(--ink3);
+  margin-bottom:24px;line-height:1.6;
+}
+
+/* ── FORM ── */
+.field{margin-bottom:18px}
+.field label{
+  display:block;font-size:13px;
+  font-weight:700;color:var(--ink2);
+  margin-bottom:6px;
+}
+.field label span{
+  font-weight:400;color:var(--ink3);
+  font-size:12px;margin-left:4px;
+}
+.field input,.field select{
+  width:100%;
+  border:1.5px solid var(--border2);
+  border-radius:8px;
+  padding:12px 14px;
+  font-family:'DM Sans',sans-serif;
+  font-size:15px;color:var(--ink);
+  background:var(--white);
+  transition:border-color .2s,box-shadow .2s;
+  outline:none;
+  -webkit-appearance:none;
+}
+.field input:focus,.field select:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(30,107,69,.1);
+}
+.field input.highlight{
+  border-color:var(--green);
+  background:var(--green-l);
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:400px){.field-row{grid-template-columns:1fr}}
+
+.input-prefix{position:relative}
+.input-prefix .pfx{
+  position:absolute;left:13px;top:50%;
+  transform:translateY(-50%);
+  font-size:14px;font-weight:600;color:var(--ink3);
+  pointer-events:none;
+}
+.input-prefix input{padding-left:32px}
+
+/* ── RANGE ── */
+.range-wrap{
+  display:flex;flex-direction:column;gap:8px;
+}
+.range-row{display:flex;align-items:center;gap:14px}
+input[type=range]{
+  flex:1;-webkit-appearance:none;
+  height:5px;border-radius:4px;
+  background:var(--border);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--green);cursor:pointer;
+  box-shadow:0 2px 6px rgba(30,107,69,.3);
+}
+.range-val{
+  font-size:18px;font-weight:800;color:var(--green);
+  width:52px;text-align:right;flex-shrink:0;
+}
+
+/* ── HELPER TEXT ── */
+.helper{
+  font-size:12px;color:var(--ink3);
+  margin-top:5px;line-height:1.5;
+}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'DM Sans',sans-serif;
+  font-weight:800;font-size:15px;
+  padding:14px 28px;border-radius:9px;
+  border:none;cursor:pointer;
+  transition:transform .15s,box-shadow .15s,background .15s;
+  text-decoration:none;letter-spacing:.01em;
+}
+.btn-primary{
+  background:var(--green);color:#fff;
+  box-shadow:0 4px 16px rgba(30,107,69,.25);
+  width:100%;
+}
+.btn-primary:hover{background:#185A39;transform:translateY(-2px);box-shadow:0 6px 20px rgba(30,107,69,.35)}
+.btn-back{
+  background:none;color:var(--ink3);
+  border:1.5px solid var(--border2);
+  padding:12px 22px;font-size:14px;
+  font-weight:600;
+}
+.btn-back:hover{background:var(--bg);color:var(--ink)}
+.btn-row{display:flex;gap:10px;margin-top:8px}
+.btn-row .btn-primary{flex:1}
+
+/* ── STEP SCREENS ── */
+.step-screen{display:none}
+.step-screen.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── RESULTS PARTIAL ── */
+.result-section{margin-bottom:24px}
+.result-title{
+  font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);
+  margin-bottom:12px;
+}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:380px){.result-grid{grid-template-columns:1fr}}
+
+.rcard{
+  border-radius:10px;padding:16px;
+  border:1px solid transparent;
+}
+.rcard .rl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.rcard .rv{font-family:'DM Serif Display',serif;font-size:28px;line-height:1.05}
+.rcard .rs{font-size:12px;margin-top:4px;font-weight:500}
+
+.rc-cost{background:var(--red-l);border-color:#F5C6BB}
+.rc-cost .rl{color:var(--red)}.rc-cost .rv{color:var(--red)}
+.rc-price{background:var(--green-l);border-color:#B8DEC7}
+.rc-price .rl{color:var(--green)}.rc-price .rv{color:var(--green)}
+.rc-profit{background:var(--amber-l);border-color:#F5D9AB}
+.rc-profit .rl{color:var(--amber)}.rc-profit .rv{color:var(--amber)}
+.rc-margin{background:#F4F0FF;border-color:#D4C8FA}
+.rc-margin .rl{color:#6930C3}.rc-margin .rv{color:#6930C3}
+
+/* status badge */
+.status-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:100px;
+  font-size:13px;font-weight:700;margin-top:14px;
+}
+.status-badge .dot{width:8px;height:8px;border-radius:50%}
+.sb-great{background:#EAF4EE;color:#1E6B45;border:1px solid #B8DEC7}
+.sb-great .dot{background:#1E6B45}
+.sb-ok{background:#EEF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.sb-ok .dot{background:#1D4ED8}
+.sb-low{background:var(--amber-l);color:var(--amber);border:1px solid #F5D9AB}
+.sb-low .dot{background:var(--amber)}
+.sb-bad{background:var(--red-l);color:var(--red);border:1px solid #F5C6BB}
+.sb-bad .dot{background:var(--red)}
+
+/* ── BREAKDOWN ── */
+.breakdown{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:10px;padding:16px;margin-top:12px;
+}
+.brow{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:8px;font-size:13px;
+}
+.brow:last-child{margin-bottom:0}
+.brow .bname{flex:1;color:var(--ink2)}
+.brow .bval{font-weight:700;color:var(--ink)}
+.brow .bpct{font-size:11px;color:var(--ink3);width:40px;text-align:right}
+.brow .bbar-w{width:80px;height:5px;background:var(--border);border-radius:3px;flex-shrink:0}
+.brow .bbar{height:100%;border-radius:3px}
+.breakdown-total{
+  border-top:1px solid var(--border2);
+  padding-top:10px;margin-top:10px;
+  display:flex;justify-content:space-between;
+  font-weight:800;font-size:14px;
+}
+
+/* ── GATE ── */
+.gate-card{
+  background:var(--green);
+  border:none;border-radius:var(--radius);
+  padding:32px;text-align:center;
+  box-shadow:0 8px 32px rgba(30,107,69,.25);
+}
+.gate-icon{font-size:40px;margin-bottom:14px}
+.gate-card h2{
+  font-family:'DM Serif Display',serif;
+  font-size:24px;color:#fff;
+  margin-bottom:10px;line-height:1.2;
+}
+.gate-card p{color:rgba(255,255,255,.8);font-size:15px;margin-bottom:24px;line-height:1.6}
+
+.gate-preview{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  margin-bottom:22px;
+}
+.gp-item{
+  background:rgba(0,0,0,.2);border-radius:8px;
+  padding:12px;position:relative;overflow:hidden;
+}
+.gp-item::after{
+  content:'';position:absolute;inset:0;
+  backdrop-filter:blur(6px);background:rgba(0,0,0,.15);
+  border-radius:8px;
+}
+.gp-item .gl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin-bottom:4px}
+.gp-item .gv{font-family:'DM Serif Display',serif;font-size:24px;color:rgba(255,255,255,.9)}
+.gp-item .lock{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;font-size:22px}
+
+.gate-form{text-align:left}
+.gate-form label{
+  display:block;font-size:13px;font-weight:700;
+  color:rgba(255,255,255,.85);margin-bottom:5px;
+}
+.gate-form input{
+  width:100%;background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.25);
+  border-radius:8px;padding:12px 14px;
+  font-family:'DM Sans',sans-serif;font-size:15px;
+  color:#fff;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.gate-form input::placeholder{color:rgba(255,255,255,.4)}
+.gate-form input:focus{
+  border-color:rgba(255,255,255,.6);
+  box-shadow:0 0 0 3px rgba(255,255,255,.1);
+}
+.gate-field{margin-bottom:12px}
+.btn-white{
+  background:#fff;color:var(--green);
+  font-weight:800;width:100%;
+  box-shadow:0 4px 16px rgba(0,0,0,.15);
+  margin-top:16px;
+}
+.btn-white:hover{background:#f0faf4;transform:translateY(-2px)}
+
+.privacy-note{
+  font-size:11px;color:rgba(255,255,255,.5);
+  text-align:center;margin-top:10px;line-height:1.5;
+}
+
+/* ── FULL RESULTS ── */
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:380px){.proj-grid{grid-template-columns:1fr}}
+
+.pcard{
+  border-radius:10px;padding:16px;border:1px solid var(--border);
+  background:var(--white);text-align:center;
+}
+.pcard .pl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:6px}
+.pcard .pv{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1}
+.pcard .ps{font-size:12px;color:var(--ink3);margin-top:4px}
+
+.pcard-highlight{
+  background:var(--green);border-color:var(--green);
+  grid-column:1/-1;
+}
+.pcard-highlight .pl{color:rgba(255,255,255,.7)}
+.pcard-highlight .pv{color:#fff;font-size:38px}
+.pcard-highlight .ps{color:rgba(255,255,255,.7)}
+
+.goal-box{
+  background:var(--amber-l);border:1px solid #F5D9AB;
+  border-radius:10px;padding:18px;margin-top:12px;
+}
+.goal-box h4{font-size:14px;font-weight:800;color:var(--amber);margin-bottom:8px}
+.goal-box p{font-size:14px;color:var(--ink2);line-height:1.6}
+.goal-box strong{color:var(--amber)}
+
+/* ── CTA PLANILHA ── */
+.cta-planilha{
+  background:var(--ink);border-radius:var(--radius);
+  padding:28px;text-align:center;margin-top:20px;
+}
+.cta-planilha h3{
+  font-family:'DM Serif Display',serif;
+  font-size:22px;color:#fff;margin-bottom:8px;line-height:1.2;
+}
+.cta-planilha p{color:rgba(255,255,255,.6);font-size:14px;margin-bottom:20px;line-height:1.6}
+.btn-cta{
+  background:var(--green);color:#fff;
+  font-weight:800;font-size:15px;
+  padding:13px 28px;border-radius:8px;
+  text-decoration:none;display:inline-block;
+  transition:background .15s,transform .15s;
+}
+.btn-cta:hover{background:#185A39;transform:translateY(-2px)}
+.cta-planilha small{display:block;color:rgba(255,255,255,.35);font-size:11px;margin-top:10px}
+
+/* ── REFAZER ── */
+.btn-restart{
+  background:none;border:1.5px solid var(--border2);
+  color:var(--ink3);font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:600;
+  padding:8px 18px;border-radius:8px;
+  cursor:pointer;transition:all .15s;
+  margin-top:12px;width:100%;
+}
+.btn-restart:hover{background:var(--bg);color:var(--ink)}
+
+/* ── ADMIN ── */
+#admin-panel{
+  display:none;
+  max-width:900px;margin:0 auto;
+  padding:40px 24px;
+}
+#admin-panel h2{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:8px}
+#admin-panel p{color:var(--ink3);font-size:14px;margin-bottom:20px}
+.admin-actions{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.admin-btn{
+  padding:9px 18px;border-radius:7px;border:none;
+  font-family:'DM Sans',sans-serif;font-weight:700;
+  font-size:13px;cursor:pointer;transition:all .15s;
+}
+.admin-btn-green{background:var(--green);color:#fff}
+.admin-btn-green:hover{background:#185A39}
+.admin-btn-red{background:var(--red-l);color:var(--red);border:1px solid #F5C6BB}
+.admin-btn-red:hover{background:#f8d5cc}
+
+.leads-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+.leads-table{
+  width:100%;border-collapse:collapse;
+  font-size:13px;
+}
+.leads-table th{
+  background:var(--bg);padding:10px 14px;
+  font-weight:700;color:var(--ink2);
+  text-align:left;border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+.leads-table td{
+  padding:10px 14px;border-bottom:1px solid var(--border);
+  color:var(--ink2);vertical-align:top;
+}
+.leads-table tr:last-child td{border-bottom:none}
+.leads-table tr:hover td{background:var(--bg)}
+.empty-leads{
+  text-align:center;padding:40px;color:var(--ink3);font-size:14px;
+}
+.lead-count{
+  display:inline-block;background:var(--green-l);
+  color:var(--green);font-weight:800;
+  padding:4px 12px;border-radius:100px;
+  font-size:13px;margin-left:8px;
+}
+
+/* ── FOOTER ── */
+.sim-footer{
+  text-align:center;padding:32px 24px;
+  font-size:12px;color:var(--ink3);
+  border-top:1px solid var(--border);
+  margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero" id="page-hero">
+  <div class="hero-badge">✦ Simulador Gratuito</div>
+  <h1>Descubra <em>quanto cobrar</em><br>pelo seu produto</h1>
+  <p class="hero-sub">Preencha os dados do seu produto e veja o custo real, o preço ideal e a projeção de lucro mensal — em menos de 2 minutos.</p>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar" id="progress-bar">
+  <div class="progress-inner">
+    <div class="progress-steps" id="progress-steps">
+      <div class="pstep active" id="pstep-1">
+        <div class="pstep-dot">1</div>
+        <span class="pstep-label">Produto</span>
+        <div class="pstep-line"></div>
+      </div>
+      <div class="pstep" id="pstep-2">
+        <div class="pstep-dot">2</div>
+        <span class="pstep-label">Custos</span>
+        <div class="pstep-line"></div>
+      </div>
+      <div class="pstep" id="pstep-3">
+        <div class="pstep-dot">3</div>
+        <span class="pstep-label">Meta</span>
+        <div class="pstep-line"></div>
+      </div>
+      <div class="pstep" id="pstep-4">
+        <div class="pstep-dot">4</div>
+        <span class="pstep-label">Resultado</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content">
+
+  <!-- STEP 1: PRODUTO -->
+  <div class="step-screen active" id="step-1">
+    <div class="card">
+      <div class="card-title">Sobre o seu produto</div>
+      <div class="card-desc">Vamos começar com as informações básicas do que você vende.</div>
+
+      <div class="field">
+        <label>Nome do produto <span>(ex: Bolo de Chocolate, Vela Aromática...)</span></label>
+        <input type="text" id="s1-nome" placeholder="Ex: Torta de Morango" />
+      </div>
+      <div class="field">
+        <label>Tipo de produto</label>
+        <select id="s1-tipo">
+          <option value="">Selecione...</option>
+          <option>🎂 Confeitaria / Doces</option>
+          <option>🍱 Marmitas / Refeições</option>
+          <option>🧵 Artesanato / Costura</option>
+          <option>🧴 Cosméticos / Velas</option>
+          <option>🛍️ Outro produto artesanal</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Quantas unidades essa receita/lote produz? <span>(rendimento)</span></label>
+        <input type="number" id="s1-rend" min="1" value="1" placeholder="Ex: 1 torta, 12 brigadeiros..." />
+        <p class="helper">Ex: se sua receita rende 1 bolo, coloque 1. Se rende 20 docinhos, coloque 20.</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goStep(2)">Próximo →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: CUSTOS -->
+  <div class="step-screen" id="step-2">
+    <div class="card">
+      <div class="card-title">Seus custos de produção</div>
+      <div class="card-desc">Quanto custa produzir esse produto? Coloque valores aproximados — você pode ajustar depois.</div>
+
+      <div class="field">
+        <label>Custo dos ingredientes / materiais <span>(por receita/lote)</span></label>
+        <div class="input-prefix">
+          <span class="pfx">R$</span>
+          <input type="number" id="s2-ing" min="0" step="0.01" placeholder="0,00" />
+        </div>
+        <p class="helper">Some o custo de todos os ingredientes ou matérias-primas usados nessa receita.</p>
+      </div>
+
+      <div class="field">
+        <label>Embalagem <span>(por unidade produzida)</span></label>
+        <div class="input-prefix">
+          <span class="pfx">R$</span>
+          <input type="number" id="s2-emb" min="0" step="0.01" placeholder="0,00" />
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Tempo de preparo <span>(minutos)</span></label>
+          <input type="number" id="s2-tempo" min="0" value="60" placeholder="60" />
+        </div>
+        <div class="field">
+          <label>Valor da sua hora <span>(R$/hora)</span></label>
+          <div class="input-prefix">
+            <span class="pfx">R$</span>
+            <input type="number" id="s2-hora" min="0" step="0.01" value="15" placeholder="15,00" />
+          </div>
+        </div>
+      </div>
+      <p class="helper" style="margin-top:-10px">Não sabe o valor da sua hora? Divida quanto quer ganhar por mês pelas horas trabalhadas. Ex: R$ 2.000 ÷ 133h = R$ 15/h.</p>
+
+      <div class="field" style="margin-top:18px">
+        <label>Custos fixos mensais <span>(aluguel, gás, energia, etc.)</span></label>
+        <div class="input-prefix">
+          <span class="pfx">R$</span>
+          <input type="number" id="s2-fixos" min="0" step="0.01" placeholder="0,00" />
+        </div>
+        <p class="helper">Some todos os gastos mensais do negócio. Ex: R$ 100 gás + R$ 350 energia + R$ 2.000 pró-labore = R$ 2.450</p>
+      </div>
+
+      <div class="field">
+        <label>Quantas unidades você produz por mês? <span>(estimativa)</span></label>
+        <input type="number" id="s2-prod" min="1" value="50" placeholder="50" />
+        <p class="helper">Usado para dividir os custos fixos por unidade produzida.</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(1)">← Voltar</button>
+        <button class="btn btn-primary" onclick="goStep(3)">Próximo →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: META -->
+  <div class="step-screen" id="step-3">
+    <div class="card">
+      <div class="card-title">Sua margem e meta de vendas</div>
+      <div class="card-desc">Defina quanto quer lucrar e quantas unidades planeja vender por semana.</div>
+
+      <div class="field">
+        <label>Margem de lucro desejada</label>
+        <div class="range-wrap">
+          <div class="range-row">
+            <input type="range" id="s3-margem" min="5" max="150" value="30" oninput="updateMargem(this.value)" />
+            <div class="range-val" id="margem-display">30%</div>
+          </div>
+        </div>
+        <p class="helper">30–50% é considerado saudável para produtos artesanais. Abaixo de 20% é perigoso.</p>
+      </div>
+
+      <div class="field" style="margin-top:20px">
+        <label>Quantas unidades você quer vender por semana?</label>
+        <input type="number" id="s3-semana" min="1" value="10" placeholder="10" />
+        <p class="helper">Usado para projetar seu faturamento e lucro mensal.</p>
+      </div>
+
+      <div class="field">
+        <label>Qual o seu objetivo mensal de faturamento? <span>(opcional)</span></label>
+        <div class="input-prefix">
+          <span class="pfx">R$</span>
+          <input type="number" id="s3-meta" min="0" step="100" placeholder="Ex: 5000" />
+        </div>
+        <p class="helper">Vamos calcular quantas vendas você precisa fazer para atingir esse objetivo.</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(2)">← Voltar</button>
+        <button class="btn btn-primary" onclick="calcular()">Ver meu resultado →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: RESULTADO PARCIAL + GATE -->
+  <div class="step-screen" id="step-4">
+
+    <!-- Resultados parciais (visíveis) -->
+    <div class="card" id="partial-results" style="display:none">
+      <div class="result-title">💰 Precificação do seu produto</div>
+      <div id="produto-nome-display" style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:16px;color:var(--ink)"></div>
+
+      <div class="result-grid" id="result-cards">
+        <!-- preenchido via JS -->
+      </div>
+
+      <div id="status-display"></div>
+
+      <!-- Breakdown -->
+      <div style="margin-top:18px">
+        <div class="result-title">🔍 De onde vem o custo de R$ <span id="custo-breakdown-val"></span></div>
+        <div class="breakdown" id="breakdown-box">
+
+        <div class="pcard">
+          <div class="pl">Faturamento Semanal</div>
+          <div class="pv" id="pv-fat-sem">-</div>
+          <div class="ps" id="ps-fat-sem">calculando...</div>
+        </div>
+        <div class="pcard">
+          <div class="pl">Lucro Semanal</div>
+          <div class="pv" id="pv-lucro-sem">-</div>
+          <div class="ps" id="ps-lucro-sem">calculando...</div>
+        </div>
+        <div class="pcard">
+          <div class="pl">Faturamento Mensal</div>
+          <div class="pv" id="pv-fat-mes">-</div>
+          <div class="ps" id="ps-fat-mes">calculando...</div>
+        </div>
+        <div class="pcard">
+          <div class="pl">Lucro Mensal</div>
+          <div class="pv" id="pv-lucro-mes">-</div>
+          <div class="ps" id="ps-lucro-mes">calculando...</div>
+        </div>
+        <div class="pcard pcard-highlight">
+          <div class="pl">Lucro Anual Projetado</div>
+          <div class="pv" id="pv-lucro-ano">-</div>
+          <div class="ps" id="ps-lucro-ano">calculando...</div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GATE -->
+    <div class="card gate-card" id="gate-card">
+      <div class="gate-icon">📊</div>
+      <h2>Sua projeção de lucro está pronta</h2>
+      <p>Informe seu nome e WhatsApp para ver <strong style="color:#fff">faturamento mensal, lucro por mês e projeção anual</strong> do seu produto.</p>
+
+      <!-- Preview borrado -->
+      <div class="gate-preview">
+        <div class="gp-item">
+          <div class="gl">Lucro Mensal</div>
+          <div class="gv" id="gp-mes">R$ ???</div>
+          <div class="lock">🔒</div>
+        </div>
+        <div class="gp-item">
+          <div class="gl">Lucro Anual</div>
+          <div class="gv" id="gp-ano">R$ ???</div>
+          <div class="lock">🔒</div>
+        </div>
+      </div>
+
+      <div class="gate-form">
+        <div class="gate-field">
+          <label>Seu nome</label>
+          <input type="text" id="g-nome" placeholder="Como posso te chamar?" />
+        </div>
+        <div class="gate-field">
+          <label>Seu WhatsApp <span style="font-weight:400;opacity:.7">(com DDD)</span></label>
+          <input type="tel" id="g-wpp" placeholder="(11) 99999-9999"
+                 oninput="maskPhone(this)" />
+        </div>
+        <button class="btn btn-white" onclick="revelarResultado()">
+          🔓 Ver minha projeção de lucro
+        </button>
+        <p class="privacy-note">🔒 Seus dados são privados. Não enviamos spam.</p>
+      </div>
+    </div>
+
+    <!-- RESULTADO COMPLETO (oculto até gate) -->
+    <div id="full-results" style="display:none">
+      <div class="card">
+        <div class="result-title">📈 Sua projeção de lucro</div>
+        <div class="proj-grid" id="proj-cards">
+
+        <div class="pcard">
+          <div class="pl">Faturamento Semanal</div>
+          <div class="pv" id="pv-fat-sem">-</div>
+          <div class="ps" id="ps-fat-sem">calculando...</div>
+        </div>
+        <div class="pcard">
+          <div class="pl">Lucro Semanal</div>
+          <div class="pv" id="pv-lucro-sem">-</div>
+          <div class="ps" id="ps-lucro-sem">calculando...</div>
+        </div>
+        <div class="pcard">
+          <div class="pl">Faturamento Mensal</div>
+          <div class="pv" id="pv-fat-mes">-</div>
+          <div class="ps" id="ps-fat-mes">calculando...</div>
+        </div>
+        <div class="pcard">
+          <div class="pl">Lucro Mensal</div>
+          <div class="pv" id="pv-lucro-mes">-</div>
+          <div class="ps" id="ps-lucro-mes">calculando...</div>
+        </div>
+        <div class="pcard pcard-highlight">
+          <div class="pl">Lucro Anual Projetado</div>
+          <div class="pv" id="pv-lucro-ano">-</div>
+          <div class="ps" id="ps-lucro-ano">calculando...</div>
+        </div>
+        </div>
+        <div id="goal-box-container"></div>
+      </div>
+
+      <div class="cta-planilha">
+        <h3>Quer calcular o preco de todos os seus produtos?</h3>
+        <p>Estou finalizando a <strong style="color:#fff">Planilha de Precifica&ccedil;&atilde;o Inteligente</strong> — 9 abas, dashboard visual e simulador de lucro. Deixa seu interesse e voce sera avisada primeiro no lan&ccedil;amento.</p>
+        <button class="btn-cta" id="btn-interesse" onclick="registrarInteresse()">
+          Tenho interesse no lan&ccedil;amento
+        </button>
+        <div id="interesse-confirmado" style="display:none;margin-top:14px;padding:12px 16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:14px;color:#fff;">
+          Interesse registrado! Voce sera avisada assim que lan&ccedil;armos. Fique de olho no WhatsApp!
+        </div>
+        <small style="margin-top:12px;display:block;opacity:.5">Gratuito. Sem compromisso.</small>
+      </div>
+
+      <button class="btn-restart" onclick="restart()">↩ Simular outro produto</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADMIN PANEL (acessível via /#admin) -->
+<div id="admin-panel">
+  <h2>Painel de Leads <span class="lead-count" id="lead-count">0</span></h2>
+  <p>Leads capturados pelo simulador. Exporte para CSV ou copie os dados.</p>
+  <div class="admin-actions">
+    <button class="admin-btn admin-btn-green" onclick="exportCSV()">⬇️ Exportar CSV</button>
+    <button class="admin-btn admin-btn-green" onclick="copyWpp()">📋 Copiar WhatsApps</button>
+    <button class="admin-btn admin-btn-red" onclick="clearLeads()">🗑️ Limpar leads</button>
+  </div>
+  <div class="leads-table-wrap">
+    <table class="leads-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>WhatsApp</th>
+          <th>Produto</th>
+          <th>Preço Sug.</th>
+          <th>Lucro/Un.</th>
+          <th>Lucro/Mês</th>
+          <th>Data/Hora</th>
+        </tr>
+      </thead>
+      <tbody id="leads-tbody">
+        <tr><td colspan="8" class="empty-leads">Nenhum lead capturado ainda.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sim-footer" id="sim-footer">
+  Simulador gratuito · Os valores são estimativas baseadas nos dados inseridos
+</div>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzOf04gU639_RasLMr8sndel4cAb2fUcyMWZFQHe_bDx6TEbictOgvyRfr9DOkJVVvG/exec';
+
+// ── STATE ──────────────────────────────────────────────
+let results = {};
+
+// ── STEP NAVIGATION ────────────────────────────────────
+function goStep(n) {
+  if (n > 1 && !validateStep(n - 1)) return;
+
+  document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  updateProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(n) {
+  if (n === 1) {
+    if (!v('s1-nome').trim()) { flash('s1-nome'); return false; }
+  }
+  if (n === 2) {
+    if (!v('s2-ing') || parseFloat(v('s2-ing')) < 0) { flash('s2-ing'); return false; }
+    if (!v('s2-prod') || parseInt(v('s2-prod')) < 1)  { flash('s2-prod'); return false; }
+  }
+  return true;
+}
+
+function flash(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = '#C23B22';
+  el.style.boxShadow = '0 0 0 3px rgba(194,59,34,.15)';
+  el.focus();
+  setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 2000);
+}
+
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+function updateProgress(n) {
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById('pstep-' + i);
+    if (!s) continue;
+    s.classList.remove('active', 'done');
+    if (i < n)  s.classList.add('done');
+    if (i === n) s.classList.add('active');
+  }
+}
+
+function updateMargem(v) {
+  document.getElementById('margem-display').textContent = v + '%';
+}
+
+// ── CALCULAR ────────────────────────────────────────────
+function calcular() {
+  if (!validateStep(3)) return;
+
+  const nome    = v('s1-nome').trim();
+  const rend    = Math.max(1, parseFloat(v('s1-rend')) || 1);
+  const ing     = parseFloat(v('s2-ing'))   || 0;
+  const emb     = parseFloat(v('s2-emb'))   || 0;
+  const tempo   = parseFloat(v('s2-tempo')) || 0;
+  const hora    = parseFloat(v('s2-hora'))  || 0;
+  const fixos   = parseFloat(v('s2-fixos')) || 0;
+  const prod    = Math.max(1, parseInt(v('s2-prod')) || 50);
+  const margem  = parseFloat(v('s3-margem')) || 30;
+  const semana  = Math.max(1, parseInt(v('s3-semana')) || 10);
+  const metaRaw = parseFloat(v('s3-meta')); const metaMes = (!isNaN(metaRaw) && metaRaw > 0) ? metaRaw : 0;
+
+  const custo_mao    = (tempo / 60) * hora;
+  const custo_fixo   = fixos / prod;
+  const custo_ing_un = ing / rend;
+  const custo_emb_un = emb;
+
+  const custo_total = custo_ing_un + custo_mao + custo_fixo + custo_emb_un;
+  const preco_sug   = custo_total * (1 + margem / 100);
+  const lucro_un    = preco_sug - custo_total;
+
+  const fat_sem  = semana * preco_sug;
+  const fat_mes  = semana * 4 * preco_sug;
+  const lucro_mes = semana * 4 * lucro_un;
+  const lucro_ano = lucro_mes * 12;
+  const vendas_meta = metaMes > 0 ? Math.ceil(metaMes / preco_sug) : 0;
+
+  results = {
+    nome, rend, ing: custo_ing_un, mao: custo_mao,
+    fixo: custo_fixo, emb: custo_emb_un,
+    custo_total, preco_sug, lucro_un, margem,
+    fat_sem, fat_mes, lucro_mes, lucro_ano,
+    semana, metaMes, vendas_meta
+  };
+
+  // Preencher preview borrado do gate
+  var brl2 = function(v){ return 'R$ ' + (typeof v==='number'?v:0).toFixed(2).replace('.',','); };
+  var el_mes = document.getElementById('gp-mes');
+  var el_ano = document.getElementById('gp-ano');
+  if (el_mes) el_mes.textContent = brl2(lucro_mes);
+  if (el_ano) el_ano.textContent = brl2(lucro_ano);
+
+  // Forçar estado correto dos divs antes de exibir o gate
+  var pr = document.getElementById('partial-results');
+  var gc = document.getElementById('gate-card');
+  var fr = document.getElementById('full-results');
+  if (pr) pr.style.display = 'none';
+  if (gc) gc.style.display = 'block';
+  if (fr) fr.style.display = 'none';
+
+  goStep(4);
+}
+
+// ── RENDER PARTIAL ──────────────────────────────────────
+function renderPartial() {
+  const r = results;
+  const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+
+  document.getElementById('produto-nome-display').textContent = r.nome;
+  document.getElementById('custo-breakdown-val').textContent = r.custo_total.toFixed(2).replace('.', ',');
+
+  // KPI cards
+  document.getElementById('result-cards').innerHTML = `
+    <div class="rcard rc-cost">
+      <div class="rl">Custo Real / Unidade</div>
+      <div class="rv">${brl(r.custo_total)}</div>
+      <div class="rs" style="color:var(--red)">tudo incluído</div>
+    </div>
+    <div class="rcard rc-price">
+      <div class="rl">Preço Sugerido</div>
+      <div class="rv">${brl(r.preco_sug)}</div>
+      <div class="rs" style="color:var(--green)">com ${r.margem}% de margem</div>
+    </div>
+    <div class="rcard rc-profit">
+      <div class="rl">Lucro / Unidade</div>
+      <div class="rv">${brl(r.lucro_un)}</div>
+      <div class="rs" style="color:var(--amber)">por unidade vendida</div>
+    </div>
+    <div class="rcard rc-margin">
+      <div class="rl">Margem de Lucro</div>
+      <div class="rv">${r.margem}%</div>
+      <div class="rs" style="color:#6930C3">${statusLabel(r.margem)}</div>
+    </div>
+  `;
+
+  // Status badge
+  const { cls, label } = statusBadge(r.margem);
+  document.getElementById('status-display').innerHTML =
+    `<div class="status-badge ${cls}"><div class="dot"></div>${label}</div>`;
+
+  // Breakdown
+  const total = r.custo_total || 1;
+  const rows = [
+    { name: 'Ingredientes / Materiais', val: r.ing,  color: '#1D4ED8' },
+    { name: 'Mão de Obra',              val: r.mao,  color: '#6930C3' },
+    { name: 'Custos Fixos (rateio)',    val: r.fixo, color: '#1E6B45' },
+    { name: 'Embalagem',                val: r.emb,  color: '#A85C00' },
+  ].filter(row => row.val > 0);
+
+  document.getElementById('breakdown-box').innerHTML =
+    rows.map(row => `
+      <div class="brow">
+        <div class="bname">${row.name}</div>
+        <div class="bbar-w"><div class="bbar" style="width:${Math.round(row.val/total*100)}%;background:${row.color}"></div></div>
+        <div class="bpct">${Math.round(row.val/total*100)}%</div>
+        <div class="bval">${brl(row.val)}</div>
+      </div>
+    `).join('') +
+    `<div class="breakdown-total"><span>Custo total</span><span>${brl(r.custo_total)}</span></div>`;
+
+  // Preview gate (borrado)
+  document.getElementById('gp-mes').textContent = brl(r.lucro_mes);
+  document.getElementById('gp-ano').textContent = brl(r.lucro_ano);
+}
+
+// ── STATUS ──────────────────────────────────────────────
+function statusLabel(m) {
+  if (m >= 50) return 'Alta margem';
+  if (m >= 30) return 'Margem ideal';
+  if (m >= 15) return 'Margem baixa';
+  return 'Atenção: muito baixa';
+}
+function statusBadge(m) {
+  if (m >= 50) return { cls: 'sb-great', label: '✓ Alta margem — ótimo!' };
+  if (m >= 30) return { cls: 'sb-ok',    label: '✓ Margem ideal — saudável' };
+  if (m >= 15) return { cls: 'sb-low',   label: '⚠ Margem baixa — cuidado' };
+  return { cls: 'sb-bad', label: '✗ Margem muito baixa — risco de prejuízo' };
+}
+
+// ── GATE / REVEAL ────────────────────────────────────────
+function maskPhone(el) {
+  let v = el.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 6)      v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+  else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+  else if (v.length > 0) v = '(' + v;
+  el.value = v;
+}
+
+function revelarResultado() {
+  const nome = document.getElementById('g-nome').value.trim();
+  const wpp  = document.getElementById('g-wpp').value.trim();
+
+  if (!nome) { flashEl('g-nome'); return; }
+  if (wpp.replace(/\D/g,'').length < 10) { flashEl('g-wpp'); return; }
+
+  // Salvar lead
+  saveLead(nome, wpp);
+
+  // Mostrar resultado parcial (estava oculto ate o gate)
+  var partialEl = document.getElementById('partial-results');
+  if (partialEl) partialEl.style.display = 'block';
+  try { renderPartial(); } catch(e){ console.error('partial:', e); }
+
+  // Esconder gate, mostrar projecao
+  document.getElementById('gate-card').style.display = 'none';
+  document.getElementById('full-results').style.display = 'block';
+  setTimeout(function(){ try{ renderFull(nome); }catch(e){ console.error('full:',e); } }, 100);
+
+  if (partialEl) partialEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+function flashEl(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = 'rgba(255,255,255,.8)';
+  el.style.boxShadow = '0 0 0 3px rgba(255,255,255,.25)';
+  el.focus();
+  setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 2000);
+}
+
+function renderFull(primeiroNome) {
+  try {
+    var r    = results;
+    var num  = function(v){ return (typeof v === 'number' && isFinite(v)) ? v : 0; };
+    var brl  = function(v){ return 'R$ ' + num(v).toFixed(2).replace('.', ','); };
+    var sem  = Math.max(1, num(r.semana));
+    var name = (primeiroNome || '').split(' ')[0] || 'voce';
+
+    var set = function(id, val) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    set('pv-fat-sem',   brl(r.fat_sem));
+    set('ps-fat-sem',   sem + ' unidades por semana');
+    set('pv-lucro-sem', brl(num(r.lucro_un) * sem));
+    set('ps-lucro-sem', sem + ' un x ' + brl(r.lucro_un));
+    set('pv-fat-mes',   brl(r.fat_mes));
+    set('ps-fat-mes',   (sem * 4) + ' unidades por mes');
+    set('pv-lucro-mes', brl(r.lucro_mes));
+    set('ps-lucro-mes', 'com ' + num(r.margem) + '% de margem');
+    set('pv-lucro-ano', brl(r.lucro_ano));
+    set('ps-lucro-ano', 'mantendo ' + sem + ' unidades por semana');
+
+    var meta = num(r.metaMes);
+    if (meta > 0) {
+      var vendas = Math.ceil(num(r.vendas_meta));
+      var box = document.getElementById('goal-box-container');
+      if (box) {
+        box.style.cssText = 'background:var(--amber-l);border:1px solid #F5D9AB;border-radius:10px;padding:18px;margin-top:12px;';
+        var h4 = document.createElement('h4');
+        h4.style.cssText = 'font-size:14px;font-weight:800;color:var(--amber);margin-bottom:8px;';
+        h4.textContent = 'Para faturar R$ ' + meta.toFixed(2).replace('.',',') + ' por mes';
+        var p = document.createElement('p');
+        p.style.cssText = 'font-size:14px;color:var(--ink2);line-height:1.6;';
+        p.textContent = name + ', voce precisa vender ' + vendas + ' unidades por mes.';
+        box.innerHTML = '';
+        box.appendChild(h4);
+        box.appendChild(p);
+      }
+    }
+  } catch(e) {
+    console.error('renderFull:', e);
+  }
+}
+
+// ── LEADS ────────────────────────────────────────────────
+function saveLead(nome, wpp) {
+  var r   = results;
+  var num = function(v){ return (typeof v==='number' && isFinite(v)) ? v : 0; };
+  var brl = function(v){ return 'R$ ' + num(v).toFixed(2).replace('.',','); };
+
+  var lead = {
+    id:        Date.now(),
+    nome:      nome,
+    wpp:       wpp,
+    produto:   r.nome   || '-',
+    preco:     brl(r.preco_sug),
+    custo:     brl(r.custo_total),
+    lucro_un:  brl(r.lucro_un),
+    lucro_mes: brl(r.lucro_mes),
+    lucro_ano: brl(r.lucro_ano),
+    margem:    num(r.margem) + '%',
+    semana:    num(r.semana),
+    data:      new Date().toLocaleString('pt-BR')
+  };
+
+  // 1. Salvar local (backup)
+  var leads = JSON.parse(localStorage.getItem('sim_leads') || '[]');
+  leads.push(lead);
+  localStorage.setItem('sim_leads', JSON.stringify(leads));
+
+  // 2. Enviar para Google Sheets
+  if (SHEETS_URL && SHEETS_URL.indexOf('COLE') === -1) {
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lead)
+    }).catch(function(){});
+  }
+}
+
+function getLeads() {
+  return JSON.parse(localStorage.getItem('sim_leads') || '[]');
+}
+
+// ── RESTART ──────────────────────────────────────────────
+function restart() {
+  document.querySelectorAll('input, select').forEach(el => {
+    if (!['s3-margem','s2-hora','s1-rend','s2-prod','s3-semana'].includes(el.id)) el.value = '';
+  });
+  document.getElementById('g-nome').value = '';
+  document.getElementById('g-wpp').value = '';
+  document.getElementById('gate-card').style.display = '';
+  document.getElementById('full-results').style.display = 'none';
+  goStep(1);
+}
+
+// ── ADMIN PANEL ──────────────────────────────────────────
+function checkAdmin() {
+  if (window.location.hash === '#admin') {
+    document.getElementById('page-hero').style.display = 'none';
+    document.getElementById('progress-bar').style.display = 'none';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('sim-footer').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    renderLeadsTable();
+  }
+}
+
+function renderLeadsTable() {
+  const leads = getLeads();
+  const tbody = document.getElementById('leads-tbody');
+  document.getElementById('lead-count').textContent = leads.length;
+
+  if (!leads.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty-leads">Nenhum lead capturado ainda.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = leads.map(l => `
+    <tr>
+      <td>${l.id}</td>
+      <td>${l.nome}</td>
+      <td><a href="https://wa.me/55${l.wpp.replace(/\D/g,'')}" target="_blank" style="color:var(--green)">${l.wpp}</a></td>
+      <td>${l.produto}</td>
+      <td>${l.preco}</td>
+      <td>${l.lucro_un}</td>
+      <td>${l.lucro_mes}</td>
+      <td>${l.data}</td>
+    </tr>
+  `).join('');
+}
+
+function exportCSV() {
+  const leads = getLeads();
+  if (!leads.length) { alert('Nenhum lead para exportar.'); return; }
+  const header = 'ID,Nome,WhatsApp,Produto,Preco Sug.,Lucro/Un.,Lucro/Mes,Data\n';
+  const rows = leads.map(l =>
+    `${l.id},"${l.nome}","${l.wpp}","${l.produto}","${l.preco}","${l.lucro_un}","${l.lucro_mes}","${l.data}"`
+  ).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = 'leads-simulador.csv'; a.click();
+}
+
+function copyWpp() {
+  const leads = getLeads();
+  if (!leads.length) { alert('Nenhum lead.'); return; }
+  const text = leads.map(l => `${l.nome}: ${l.wpp}`).join('\n');
+  navigator.clipboard.writeText(text).then(() => alert('WhatsApps copiados!'));
+}
+
+function clearLeads() {
+  if (confirm('Tem certeza? Isso apagará todos os leads permanentemente.')) {
+    localStorage.removeItem('sim_leads');
+    renderLeadsTable();
+  }
+}
+
+// ── REGISTRAR INTERESSE ─────────────────────────────────
+function registrarInteresse() {
+  var btn = document.getElementById('btn-interesse');
+  var conf = document.getElementById('interesse-confirmado');
+  if (!btn || btn.dataset.clicado === 'sim') return;
+  btn.dataset.clicado = 'sim';
+  btn.textContent = 'Aguarde...';
+  btn.style.opacity = '.6';
+
+  var leads = JSON.parse(localStorage.getItem('sim_leads') || '[]');
+  var last  = leads[leads.length - 1] || {};
+
+  var payload = {
+    tipo: 'INTERESSE_LANCAMENTO',
+    nome: last.nome || '-', wpp: last.wpp || '-',
+    produto: last.produto || '-', preco: last.preco || '-',
+    custo: last.custo || '-', lucro_un: last.lucro_un || '-',
+    lucro_mes: last.lucro_mes || '-', lucro_ano: last.lucro_ano || '-',
+    margem: last.margem || '-', semana: last.semana || '-',
+    data: new Date().toLocaleString('pt-BR')
+  };
+
+  if (SHEETS_URL && SHEETS_URL.indexOf('COLE') === -1) {
+    fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+  if (btn) btn.style.display = 'none';
+  if (conf) conf.style.display = 'block';
+}
+
+// ── INIT ─────────────────────────────────────────────────
+checkAdmin();
+</script>
+</body>
+</html>
