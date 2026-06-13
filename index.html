@@ -562,7 +562,7 @@ input[type=range]::-webkit-slider-thumb{
         <label>Custo dos ingredientes / materiais <span>(por receita/lote)</span></label>
         <div class="input-prefix">
           <span class="pfx">R$</span>
-          <input type="number" id="s2-ing" min="0" step="0.01" placeholder="0,00" />
+          <input type="number" id="s2-ing" inputmode="decimal" placeholder="0,00" />
         </div>
         <p class="helper">Some o custo de todos os ingredientes ou matérias-primas usados nessa receita.</p>
       </div>
@@ -571,7 +571,7 @@ input[type=range]::-webkit-slider-thumb{
         <label>Embalagem <span>(por unidade produzida)</span></label>
         <div class="input-prefix">
           <span class="pfx">R$</span>
-          <input type="number" id="s2-emb" min="0" step="0.01" placeholder="0,00" />
+          <input type="number" id="s2-emb" inputmode="decimal" placeholder="0,00" />
         </div>
       </div>
 
@@ -584,7 +584,7 @@ input[type=range]::-webkit-slider-thumb{
           <label>Valor da sua hora <span>(R$/hora)</span></label>
           <div class="input-prefix">
             <span class="pfx">R$</span>
-            <input type="number" id="s2-hora" min="0" step="0.01" value="15" placeholder="15,00" />
+            <input type="number" id="s2-hora" inputmode="decimal" value="15" placeholder="15,00" />
           </div>
         </div>
       </div>
@@ -594,7 +594,7 @@ input[type=range]::-webkit-slider-thumb{
         <label>Custos fixos mensais <span>(aluguel, gás, energia, etc.)</span></label>
         <div class="input-prefix">
           <span class="pfx">R$</span>
-          <input type="number" id="s2-fixos" min="0" step="0.01" placeholder="0,00" />
+          <input type="number" id="s2-fixos" inputmode="decimal" placeholder="0,00" />
         </div>
         <p class="helper">Some todos os gastos mensais do negócio. Ex: R$ 100 gás + R$ 350 energia + R$ 2.000 pró-labore = R$ 2.450</p>
       </div>
@@ -639,7 +639,7 @@ input[type=range]::-webkit-slider-thumb{
         <label>Qual o seu objetivo mensal de faturamento? <span>(opcional)</span></label>
         <div class="input-prefix">
           <span class="pfx">R$</span>
-          <input type="number" id="s3-meta" min="0" step="100" placeholder="Ex: 5000" />
+          <input type="number" id="s3-meta" inputmode="decimal" step="100" placeholder="Ex: 5000" />
         </div>
         <p class="helper">Vamos calcular quantas vendas você precisa fazer para atingir esse objetivo.</p>
       </div>
@@ -829,6 +829,15 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzOf04gU639_RasLMr8s
 // ── STATE ──────────────────────────────────────────────
 let results = {};
 
+// Converte campo com virgula ou ponto para float
+function numVal(id) {
+  var el = document.getElementById(id);
+  var raw = el ? el.value : '0';
+  var clean = raw.replace(/[^0-9.,]/g, '').replace(',', '.');
+  var n = parseFloat(clean);
+  return (isNaN(n) || !isFinite(n)) ? 0 : n;
+}
+
 // ── STEP NAVIGATION ────────────────────────────────────
 function goStep(n) {
   if (n > 1 && !validateStep(n - 1)) return;
@@ -844,7 +853,7 @@ function validateStep(n) {
     if (!v('s1-nome').trim()) { flash('s1-nome'); return false; }
   }
   if (n === 2) {
-    if (!v('s2-ing') || parseFloat(v('s2-ing')) < 0) { flash('s2-ing'); return false; }
+    if (!v('s2-ing') || numVal('s2-ing') < 0) { flash('s2-ing'); return false; }
     if (!v('s2-prod') || parseInt(v('s2-prod')) < 1)  { flash('s2-prod'); return false; }
   }
   return true;
@@ -882,16 +891,16 @@ function calcular() {
   if (!validateStep(3)) return;
 
   const nome    = v('s1-nome').trim();
-  const rend    = Math.max(1, parseFloat(v('s1-rend')) || 1);
-  const ing     = parseFloat(v('s2-ing'))   || 0;
-  const emb     = parseFloat(v('s2-emb'))   || 0;
-  const tempo   = parseFloat(v('s2-tempo')) || 0;
-  const hora    = parseFloat(v('s2-hora'))  || 0;
-  const fixos   = parseFloat(v('s2-fixos')) || 0;
-  const prod    = Math.max(1, parseInt(v('s2-prod')) || 50);
-  const margem  = parseFloat(v('s3-margem')) || 30;
-  const semana  = Math.max(1, parseInt(v('s3-semana')) || 10);
-  const metaRaw = parseFloat(v('s3-meta')); const metaMes = (!isNaN(metaRaw) && metaRaw > 0) ? metaRaw : 0;
+  const rend    = Math.max(1, numVal('s1-rend') || 1);
+  const ing     = numVal('s2-ing');
+  const emb     = numVal('s2-emb');
+  const tempo   = numVal('s2-tempo');
+  const hora    = numVal('s2-hora');
+  const fixos   = numVal('s2-fixos');
+  const prod    = Math.max(1, numVal('s2-prod') || 50);
+  const margem  = numVal('s3-margem') || 30;
+  const semana  = Math.max(1, numVal('s3-semana') || 10);
+  const metaRaw = numVal('s3-meta'); const metaMes = (metaRaw > 0) ? metaRaw : 0;
 
   const custo_mao    = (tempo / 60) * hora;
   const custo_fixo   = fixos / prod;
