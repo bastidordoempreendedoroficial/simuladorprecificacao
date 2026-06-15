@@ -619,7 +619,7 @@ input[type=range]::-webkit-slider-thumb{
       <div class="card-desc">Defina quanto quer lucrar e quantas unidades planeja vender por semana.</div>
 
       <div class="field">
-        <label>Margem de lucro desejada</label>
+        <label>Quanto deseja ganhar sobre o custo do produto (%)</label>
         <div class="range-wrap">
           <div class="range-row">
             <input type="range" id="s3-margem" min="5" max="150" value="30" oninput="updateMargem(this.value)" />
@@ -902,7 +902,7 @@ function calcular() {
   const semana  = Math.max(1, numVal('s3-semana') || 10);
   const metaRaw = numVal('s3-meta'); const metaMes = (metaRaw > 0) ? metaRaw : 0;
 
-  const custo_mao    = (tempo / 60) * hora;
+  const custo_mao    = ((tempo / 60) * hora) / rend;
   const custo_fixo   = fixos / prod;
   const custo_ing_un = ing / rend;
   const custo_emb_un = emb;
