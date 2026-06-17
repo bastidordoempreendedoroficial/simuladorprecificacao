@@ -1148,13 +1148,33 @@ function getLeads() {
 
 // ── RESTART ──────────────────────────────────────────────
 function restart() {
+  // Resetar campos
   document.querySelectorAll('input, select').forEach(el => {
     if (!['s3-margem','s2-hora','s1-rend','s2-prod','s3-semana'].includes(el.id)) el.value = '';
   });
   document.getElementById('g-nome').value = '';
   document.getElementById('g-wpp').value = '';
-  document.getElementById('gate-card').style.display = '';
-  document.getElementById('full-results').style.display = 'none';
+
+  // Resetar estado de TODOS os divs do step 4 ao estado inicial
+  var pr = document.getElementById('partial-results');
+  var gc = document.getElementById('gate-card');
+  var fr = document.getElementById('full-results');
+  if (pr) pr.style.display  = 'none';   // esconde resultados parciais
+  if (gc) gc.style.display  = 'block';  // mostra gate
+  if (fr) fr.style.display  = 'none';   // esconde resultados completos
+
+  // Resetar botao de interesse para permitir novo clique
+  var btn = document.getElementById('btn-interesse');
+  var conf = document.getElementById('interesse-confirmado');
+  if (btn) {
+    btn.style.display  = 'block';
+    btn.style.opacity  = '1';
+    btn.style.cursor   = 'pointer';
+    btn.textContent    = 'Tenho interesse no lançamento';
+    delete btn.dataset.clicado;
+  }
+  if (conf) conf.style.display = 'none';
+
   goStep(1);
 }
 
@@ -1231,6 +1251,17 @@ function registrarInteresse() {
 
   var leads = JSON.parse(localStorage.getItem('sim_leads') || '[]');
   var last  = leads[leads.length - 1] || {};
+
+  // Validar: so envia se houver lead real com WhatsApp
+  if (!last.wpp || last.wpp === '-') {
+    // Pessoa chegou aqui sem preencher o gate — redirecionar
+    var gc = document.getElementById('gate-card');
+    var fr = document.getElementById('full-results');
+    if (gc) gc.style.display = 'block';
+    if (fr) fr.style.display = 'none';
+    if (btn) { btn.style.opacity = '1'; delete btn.dataset.clicado; }
+    return;
+  }
 
   var payload = {
     tipo: 'INTERESSE_LANCAMENTO',
