@@ -72,6 +72,32 @@ body{
 .btn-start:hover{transform:translateY(-3px); box-shadow:0 14px 36px rgba(0,0,0,.28)}
 .landing-nota{color:rgba(255,255,255,.42); font-size:11px; margin-top:18px}
 
+/* ── ESCOLHA DE SEGMENTO ── */
+.landing-question{color:rgba(255,255,255,.9); font-size:13px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-bottom:14px}
+.segment-choices{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:10px}
+.btn-segment{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.28); border-radius:14px;
+  color:#fff; font-family:inherit; padding:20px 26px; cursor:pointer; min-width:150px;
+  transition:transform var(--trans), background var(--trans), border-color var(--trans);
+}
+.btn-segment:hover{background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.55); transform:translateY(-3px)}
+.btn-segment .seg-ico{font-size:26px}
+.btn-segment .seg-label{font-size:15px; font-weight:800}
+.btn-segment .seg-sub{font-size:11.5px; color:rgba(255,255,255,.65)}
+
+/* ── TOGGLE DE SEGMENTO NO FORM ── */
+.segment-switch{color:rgba(255,255,255,.65); font-size:12.5px; margin-top:10px; text-decoration:underline; cursor:pointer; background:none; border:none; font-family:inherit}
+.segment-switch:hover{color:#fff}
+
+/* ── VISIBILIDADE POR SEGMENTO ── */
+.only-produto, .only-servico{display:block}
+body.tipo-servico .only-produto{display:none !important}
+body.tipo-produto .only-servico{display:none !important}
+.field-row.only-produto, .field-row.only-servico{display:flex}
+body.tipo-servico .field-row.only-produto{display:none !important}
+body.tipo-produto .field-row.only-servico{display:none !important}
+
 /* ── HERO ── */
 .hero{
   background:linear-gradient(160deg,#0F4D30 0%,#1E6B45 60%,#2D9460 100%);
@@ -304,14 +330,27 @@ input[type=range]::-webkit-slider-thumb{
 <div id="screen-landing" class="screen active">
   <div class="landing-wrap">
     <div class="landing-badge">Simulador de Precificação</div>
-    <h1 class="landing-h1">Descubra o preço ideal<br>para o seu produto</h1>
+    <h1 class="landing-h1">Descubra o preço ideal<br>para o que você vende</h1>
     <p class="landing-sub">Em poucos segundos você calcula um preço de venda considerando seus custos e sua margem de lucro.</p>
     <div class="landing-benefits">
       <div class="benefit"><div class="bi">✓</div> Gratuito</div>
       <div class="benefit"><div class="bi">✓</div> Sem cadastro</div>
       <div class="benefit"><div class="bi">✓</div> Resultado imediato</div>
     </div>
-    <button class="btn-start" onclick="abrirSimulador()">DESCOBRIR MEU PREÇO IDEAL</button>
+
+    <p class="landing-question">Primeiro, me conta:</p>
+    <div class="segment-choices">
+      <button class="btn-segment" onclick="selecionarSegmento('produto')">
+        <span class="seg-ico">📦</span>
+        <span class="seg-label">Vendo produtos</span>
+        <span class="seg-sub">bolos, roupas, artesanato...</span>
+      </button>
+      <button class="btn-segment" onclick="selecionarSegmento('servico')">
+        <span class="seg-ico">🛠️</span>
+        <span class="seg-label">Presto serviços</span>
+        <span class="seg-sub">consultoria, beleza, aulas...</span>
+      </button>
+    </div>
     <p class="landing-nota">Usado por empreendedores em todo o Brasil</p>
   </div>
 </div>
@@ -320,22 +359,23 @@ input[type=range]::-webkit-slider-thumb{
 <div id="screen-form" class="screen">
   <div class="hero">
     <div class="hero-badge">Simulador de Precificação</div>
-    <h1>Descubra o preço ideal<br>para o seu produto</h1>
-    <p>Responda 3 perguntas rápidas e veja o resultado na hora.</p>
+    <h1 id="hero-h1">Descubra o preço ideal<br>para o seu produto</h1>
+    <p>Responda perguntas rápidas e veja o resultado na hora.</p>
+    <button type="button" class="segment-switch" id="btn-switch-segmento" onclick="voltarParaLanding()">🔁 Trocar segmento</button>
   </div>
 
   <div class="main">
     <div class="card">
 
       <div class="field">
-        <label>O que você vende? <span class="req">*</span></label>
+        <label id="lbl-nome">O que você vende? <span class="req">*</span></label>
         <input type="text" id="f-nome" placeholder="Ex: Bolo de Cenoura"
                onkeydown="enterNext(event,'f-custo')" />
         <div class="field-err" id="err-nome">Conta pra gente o que você vende.</div>
       </div>
 
-      <div class="field">
-        <label>Quanto custa pra fazer? <span class="req">*</span> <span class="opt">(ingredientes/materiais)</span></label>
+      <div class="field only-produto" id="wrap-custo">
+        <label id="lbl-custo">Quanto custa pra fazer? <span class="req">*</span> <span class="opt">(ingredientes/materiais)</span></label>
         <div class="pfx-wrap">
           <span class="pfx">R$</span>
           <input type="text" inputmode="decimal" id="f-custo" class="pfx-input"
@@ -343,6 +383,31 @@ input[type=range]::-webkit-slider-thumb{
                  onkeydown="if(event.key==='Enter') document.getElementById('f-margem').focus()" />
         </div>
         <div class="field-err" id="err-custo">Informe quanto custa para produzir.</div>
+      </div>
+
+      <div class="field-row only-servico" id="row-custo-servico">
+        <div class="field">
+          <label>Tempo do serviço <span class="req">*</span> <span class="opt">(min)</span></label>
+          <input type="number" id="f-tempo-serv" min="0" placeholder="Ex: 60"
+                 onkeydown="if(event.key==='Enter') document.getElementById('f-hora-serv').focus()" />
+          <div class="field-err" id="err-tempo-serv">Informe quanto tempo leva o serviço.</div>
+        </div>
+        <div class="field">
+          <label>Valor da sua hora <span class="req">*</span></label>
+          <div class="pfx-wrap">
+            <span class="pfx">R$</span>
+            <input type="text" inputmode="decimal" id="f-hora-serv" class="pfx-input" placeholder="0,00" oninput="maskMoney(this)" />
+          </div>
+          <div class="field-err" id="err-hora-serv">Informe o valor da sua hora.</div>
+        </div>
+      </div>
+
+      <div class="field only-servico">
+        <label>Tem custo com materiais? <span class="opt">(opcional)</span></label>
+        <div class="pfx-wrap">
+          <span class="pfx">R$</span>
+          <input type="text" inputmode="decimal" id="f-custo-mat" class="pfx-input" placeholder="0,00" oninput="maskMoney(this)" />
+        </div>
       </div>
 
       <div class="field">
@@ -362,7 +427,7 @@ input[type=range]::-webkit-slider-thumb{
       <div class="advanced-body" id="adv-body">
         <div class="advanced-inner">
 
-          <div class="field-row">
+          <div class="field-row only-produto">
             <div class="field">
               <label>Embalagem <span class="opt">por unidade</span></label>
               <div class="pfx-wrap">
@@ -387,12 +452,12 @@ input[type=range]::-webkit-slider-thumb{
               <div class="field-explain">Aluguel, energia, internet...</div>
             </div>
             <div class="field">
-              <label>Produção / mês <span class="opt">(unid.)</span></label>
+              <label id="lbl-prod">Produção / mês <span class="opt">(unid.)</span></label>
               <input type="number" id="f-prod" min="1" value="50" />
             </div>
           </div>
 
-          <div class="field-row">
+          <div class="field-row only-produto">
             <div class="field">
               <label>Tempo de preparo <span class="opt">(min)</span></label>
               <input type="number" id="f-tempo" min="0" value="0" />
@@ -408,7 +473,7 @@ input[type=range]::-webkit-slider-thumb{
 
           <div class="field-row">
             <div class="field">
-              <label>Vendas / semana <span class="opt">(projeção)</span></label>
+              <label id="lbl-semana">Vendas / semana <span class="opt">(projeção)</span></label>
               <input type="number" id="f-semana" min="1" value="10" />
             </div>
             <div class="field">
@@ -489,7 +554,7 @@ input[type=range]::-webkit-slider-thumb{
     </div>
 
     <div class="cta-card">
-      <h3>Quer calcular o preço de todos os seus produtos?</h3>
+      <h3 id="cta-titulo">Quer calcular o preço de todos os seus produtos?</h3>
       <p>A Planilha de Precifica&ccedil;&atilde;o Inteligente tem 9 abas completas, dashboard visual e simulador integrado.</p>
       <a href="#" class="btn-cta-planilha" onclick="trackBuy()">Conhecer a Planilha Premium →</a>
     </div>
@@ -506,7 +571,7 @@ input[type=range]::-webkit-slider-thumb{
       <button class="btn-skip" onclick="pularLead()">Agora n&atilde;o, obrigada</button>
     </div>
 
-    <button class="btn-recalc" onclick="reiniciar()">↩ Simular outro produto</button>
+    <button class="btn-recalc" id="btn-recalc" onclick="reiniciar()">↩ Simular outro produto</button>
   </div>
 </div>
 
@@ -521,8 +586,8 @@ input[type=range]::-webkit-slider-thumb{
   </div>
   <div class="leads-wrap">
     <table class="leads-tbl">
-      <thead><tr><th>#</th><th>Nome</th><th>WhatsApp</th><th>Produto</th><th>Preço</th><th>Lucro/Mês</th><th>Data</th></tr></thead>
-      <tbody id="leads-tbody"><tr><td colspan="7" class="empty-state">Nenhum lead ainda.</td></tr></tbody>
+      <thead><tr><th>#</th><th>Nome</th><th>WhatsApp</th><th>Segmento</th><th>Produto</th><th>Preço</th><th>Lucro/Mês</th><th>Data</th></tr></thead>
+      <tbody id="leads-tbody"><tr><td colspan="8" class="empty-state">Nenhum lead ainda.</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -538,12 +603,17 @@ var fieldsTouched = {};   // rastreia quais campos foram preenchidos
 var lastFieldFocused = null;
 var maxFieldReached = '';  // último campo que o usuário alcançou (para saber onde desistiu)
 
-var FIELD_ORDER = ['f-nome','f-custo','f-margem','f-emb','f-rend','f-fixos','f-prod','f-tempo','f-hora','f-semana','f-meta'];
+var FIELD_ORDER = ['f-nome','f-custo','f-tempo-serv','f-hora-serv','f-custo-mat','f-margem','f-emb','f-rend','f-fixos','f-prod','f-tempo','f-hora','f-semana','f-meta'];
+var tipoNegocio = null; // 'produto' | 'servico' — definido na landing
 
 // ── ANALYTICS ──────────────────────────────────────────
+// Todo evento carrega automaticamente o segmento (produto/serviço) escolhido,
+// assim é possível rastrear e segmentar todos os cliques no GA4.
 function track(event, params) {
-  if (typeof gtag !== 'undefined') gtag('event', event, params || {});
-  console.log('[GA4]', event, params || {});
+  var p = params || {};
+  p.segmento = tipoNegocio || 'nao_definido';
+  if (typeof gtag !== 'undefined') gtag('event', event, p);
+  console.log('[GA4]', event, p);
 }
 
 window.addEventListener('beforeunload', function() {
@@ -655,6 +725,42 @@ function toggleAdvanced() {
   }
 }
 
+// ── SEGMENTAÇÃO: PRODUTO x SERVIÇO ──────────────────────
+function selecionarSegmento(tipo) {
+  tipoNegocio = tipo;
+  track('segmento_selecionado', { segmento: tipo });
+  aplicarSegmento(tipo);
+  abrirSimulador();
+}
+
+function aplicarSegmento(tipo) {
+  document.body.classList.remove('tipo-produto', 'tipo-servico');
+  document.body.classList.add('tipo-' + tipo);
+
+  if (tipo === 'servico') {
+    document.getElementById('hero-h1').innerHTML = 'Descubra o preço ideal<br>para o seu serviço';
+    document.getElementById('lbl-nome').innerHTML = 'Qual serviço você presta? <span class="req">*</span>';
+    document.getElementById('f-nome').placeholder = 'Ex: Corte de cabelo, Consultoria';
+    document.getElementById('lbl-prod').innerHTML = 'Atendimentos / mês <span class="opt">(qtd.)</span>';
+    document.getElementById('lbl-semana').innerHTML = 'Atendimentos / semana <span class="opt">(projeção)</span>';
+    setEl('cta-titulo', 'Quer calcular o preço de todos os seus serviços?');
+    setEl('btn-recalc', '↩ Simular outro serviço');
+  } else {
+    document.getElementById('hero-h1').innerHTML = 'Descubra o preço ideal<br>para o seu produto';
+    document.getElementById('lbl-nome').innerHTML = 'O que você vende? <span class="req">*</span>';
+    document.getElementById('f-nome').placeholder = 'Ex: Bolo de Cenoura';
+    document.getElementById('lbl-prod').innerHTML = 'Produção / mês <span class="opt">(unid.)</span>';
+    document.getElementById('lbl-semana').innerHTML = 'Vendas / semana <span class="opt">(projeção)</span>';
+    setEl('cta-titulo', 'Quer calcular o preço de todos os seus produtos?');
+    setEl('btn-recalc', '↩ Simular outro produto');
+  }
+}
+
+function voltarParaLanding() {
+  track('trocar_segmento_click');
+  showScreen('screen-landing');
+}
+
 // ── ABRIR SIMULADOR (vindo da landing) ──────────────────
 function abrirSimulador() {
   track('cta_start_click');
@@ -673,10 +779,22 @@ function validar() {
     flashField('f-nome'); ok = false;
   } else clearErr('err-nome');
 
-  if (numVal('f-custo') <= 0) {
-    showErr('err-custo', 'Informe quanto custa para produzir.');
-    flashField('f-custo'); ok = false;
-  } else clearErr('err-custo');
+  if (tipoNegocio === 'servico') {
+    if (numVal('f-tempo-serv') <= 0) {
+      showErr('err-tempo-serv', 'Informe quanto tempo leva o serviço.');
+      flashField('f-tempo-serv'); ok = false;
+    } else clearErr('err-tempo-serv');
+
+    if (numVal('f-hora-serv') <= 0) {
+      showErr('err-hora-serv', 'Informe o valor da sua hora.');
+      flashField('f-hora-serv'); ok = false;
+    } else clearErr('err-hora-serv');
+  } else {
+    if (numVal('f-custo') <= 0) {
+      showErr('err-custo', 'Informe quanto custa para produzir.');
+      flashField('f-custo'); ok = false;
+    } else clearErr('err-custo');
+  }
 
   return ok;
 }
@@ -727,13 +845,24 @@ function calcularEExibir() {
 
 function calcular() {
   var nome    = v('f-nome').trim();
-  var ing     = numVal('f-custo');
-  var rend    = Math.max(1, numVal('f-rend') || 1);
-  var emb     = numVal('f-emb');
+  var rend, emb, ing, tempo, hora;
+
+  if (tipoNegocio === 'servico') {
+    ing   = numVal('f-custo-mat');   // materiais (opcional) entram como "ingredientes"
+    rend  = 1;                        // serviço não tem lote/rendimento
+    emb   = 0;                        // embalagem não se aplica
+    tempo = numVal('f-tempo-serv');
+    hora  = numVal('f-hora-serv');
+  } else {
+    ing   = numVal('f-custo');
+    rend  = Math.max(1, numVal('f-rend') || 1);
+    emb   = numVal('f-emb');
+    tempo = numVal('f-tempo');
+    hora  = numVal('f-hora');
+  }
+
   var fixos   = numVal('f-fixos');
   var prod    = Math.max(1, numVal('f-prod') || 50);
-  var tempo   = numVal('f-tempo');
-  var hora    = numVal('f-hora');
   var margem  = numVal('f-margem') || 30;
   var semana  = Math.max(1, numVal('f-semana') || 10);
   var metaRaw = numVal('f-meta');
@@ -782,8 +911,9 @@ function renderResultado() {
 
   setEl('res-custo-label', brl(r.custo_total));
   var total = r.custo_total || 1;
+  var labelIng = tipoNegocio === 'servico' ? 'Materiais' : 'Ingredientes';
   var bdRows = [
-    {name:'Ingredientes', val:r.ing,  color:'#2563EB'},
+    {name:labelIng,        val:r.ing,  color:'#2563EB'},
     {name:'Mao de Obra',  val:r.mao,  color:'#7C3AED'},
     {name:'Custos Fixos', val:r.fixo, color:'#059669'},
     {name:'Embalagem',    val:r.emb,  color:'#D97706'},
@@ -844,7 +974,7 @@ function reiniciar() {
   results = {}; sessionStart = Date.now(); advancedOpened = false;
   fieldsTouched = {}; lastFieldFocused = null; maxFieldReached = '';
   formOpenTime = Date.now();
-  ['f-nome','f-custo','f-emb','f-fixos','f-meta'].forEach(function(id){
+  ['f-nome','f-custo','f-emb','f-fixos','f-meta','f-tempo-serv','f-hora-serv','f-custo-mat'].forEach(function(id){
     var el = document.getElementById(id); if (el) el.value = '';
   });
   var advBody = document.getElementById('adv-body');
@@ -865,7 +995,7 @@ function saveLead(nome, wpp) {
   var r = results;
   var num = function(v){ return (typeof v==='number' && isFinite(v)) ? v : 0; };
   var lead = {
-    id: Date.now(), nome: nome, wpp: wpp, produto: r.nome||'-',
+    id: Date.now(), nome: nome, wpp: wpp, produto: r.nome||'-', segmento: tipoNegocio||'-',
     preco: brl(r.preco_sug), custo: brl(r.custo_total), lucro_un: brl(r.lucro_un),
     lucro_mes: brl(r.lucro_mes), lucro_ano: brl(r.lucro_ano),
     margem: num(r.margem)+'%', semana: num(r.semana), data: new Date().toLocaleString('pt-BR')
@@ -884,18 +1014,18 @@ function renderLeadsTable() {
   var leads = getLeads();
   var tbody = document.getElementById('leads-tbody');
   var cc = document.getElementById('lead-count'); if (cc) cc.textContent = leads.length;
-  if (!leads.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum lead ainda.</td></tr>'; return; }
+  if (!leads.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhum lead ainda.</td></tr>'; return; }
   tbody.innerHTML = leads.map(function(l) {
     return '<tr><td>'+l.id+'</td><td>'+l.nome+'</td><td><a href="https://wa.me/55'+
       (l.wpp||'').replace(/\D/g,'')+'" target="_blank" style="color:var(--green)">'+l.wpp+'</a></td>'+
-      '<td>'+l.produto+'</td><td>'+l.preco+'</td><td>'+l.lucro_mes+'</td><td>'+l.data+'</td></tr>';
+      '<td>'+(l.segmento||'-')+'</td><td>'+l.produto+'</td><td>'+l.preco+'</td><td>'+l.lucro_mes+'</td><td>'+l.data+'</td></tr>';
   }).join('');
 }
 function exportCSV() {
   var leads = getLeads();
   if (!leads.length) { alert('Nenhum lead.'); return; }
-  var h = 'ID,Nome,WhatsApp,Produto,Preco,Lucro/Mes,Data\n';
-  var r = leads.map(function(l){ return l.id+',"'+l.nome+'","'+l.wpp+'","'+l.produto+'","'+l.preco+'","'+l.lucro_mes+'","'+l.data+'"'; }).join('\n');
+  var h = 'ID,Nome,WhatsApp,Segmento,Produto,Preco,Lucro/Mes,Data\n';
+  var r = leads.map(function(l){ return l.id+',"'+l.nome+'","'+l.wpp+'","'+(l.segmento||'-')+'","'+l.produto+'","'+l.preco+'","'+l.lucro_mes+'","'+l.data+'"'; }).join('\n');
   var b = new Blob([h+r], {type:'text/csv'});
   var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'leads-simulador.csv'; a.click();
 }
@@ -916,17 +1046,20 @@ function clearLeads() { if (confirm('Apagar todos os leads?')) { localStorage.re
   }
 
   // Registrar tracking individual de cada campo
-  trackFieldFill('f-nome',   'Nome do produto');
-  trackFieldFill('f-custo',  'Custo de producao');
-  trackFieldFill('f-margem', 'Margem desejada');
-  trackFieldFill('f-emb',    'Embalagem');
-  trackFieldFill('f-rend',   'Rendimento');
-  trackFieldFill('f-fixos',  'Custos fixos');
-  trackFieldFill('f-prod',   'Producao mensal');
-  trackFieldFill('f-tempo',  'Tempo de preparo');
-  trackFieldFill('f-hora',   'Valor da hora');
-  trackFieldFill('f-semana', 'Vendas por semana');
-  trackFieldFill('f-meta',   'Meta mensal');
+  trackFieldFill('f-nome',       'Nome do produto/servico');
+  trackFieldFill('f-custo',      'Custo de producao');
+  trackFieldFill('f-tempo-serv', 'Tempo do servico');
+  trackFieldFill('f-hora-serv',  'Valor da hora (servico)');
+  trackFieldFill('f-custo-mat',  'Custo de materiais (servico)');
+  trackFieldFill('f-margem',     'Margem desejada');
+  trackFieldFill('f-emb',        'Embalagem');
+  trackFieldFill('f-rend',       'Rendimento');
+  trackFieldFill('f-fixos',      'Custos fixos');
+  trackFieldFill('f-prod',       'Producao/atendimentos mensal');
+  trackFieldFill('f-tempo',      'Tempo de preparo');
+  trackFieldFill('f-hora',       'Valor da hora');
+  trackFieldFill('f-semana',     'Vendas/atendimentos por semana');
+  trackFieldFill('f-meta',       'Meta mensal');
 
   track('simulator_loaded');
   track('landing_view');
