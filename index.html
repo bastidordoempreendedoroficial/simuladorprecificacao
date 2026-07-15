@@ -556,7 +556,7 @@ input[type=range]::-webkit-slider-thumb{
     <div class="cta-card">
       <h3 id="cta-titulo">Quer calcular o preço de todos os seus produtos?</h3>
       <p>A Planilha de Precifica&ccedil;&atilde;o Inteligente tem 9 abas completas, dashboard visual e simulador integrado.</p>
-      <a href="#" class="btn-cta-planilha" onclick="trackBuy()">Conhecer a Planilha Premium →</a>
+      <a href="javascript:void(0)" class="btn-cta-planilha" onclick="irParaWhatsapp()">Conhecer a Planilha Premium →</a>
     </div>
 
     <div class="lead-section">
@@ -957,6 +957,14 @@ function getStatus(m) {
 
 // ── AÇÕES ──────────────────────────────────────────────
 function trackBuy() { track('click_buy', {produto: results.nome||'-'}); }
+
+function irParaWhatsapp() {
+  trackBuy();
+  var leadNome = document.getElementById('lead-nome');
+  var leadSection = document.querySelector('.lead-section');
+  if (leadSection) leadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(function(){ if (leadNome) leadNome.focus(); }, 400);
+}
 
 function capturarLead() {
   var nome = v('lead-nome').trim();
