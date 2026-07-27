@@ -167,22 +167,6 @@ input[type=range]::-webkit-slider-thumb{
 .slider-val{font-size:24px; font-weight:800; color:var(--green); width:60px; text-align:right; flex-shrink:0}
 .slider-hint{display:flex; justify-content:space-between; font-size:11px; color:var(--ink4); margin-top:6px}
 
-/* ── AVANÇADO (expandable) ── */
-.advanced-toggle{
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  background:none; border:none; color:var(--green); font-family:inherit;
-  font-size:13px; font-weight:700; cursor:pointer; width:100%; padding:10px;
-  transition:color var(--trans);
-}
-.advanced-toggle:hover{color:var(--green-d)}
-.advanced-toggle .arrow{transition:transform var(--trans); font-size:11px}
-.advanced-toggle.open .arrow{transform:rotate(180deg)}
-
-.advanced-body{
-  max-height:0; overflow:hidden; transition:max-height .35s ease;
-}
-.advanced-body.open{max-height:900px}
-.advanced-inner{padding-top:18px; border-top:1px solid var(--border); margin-top:6px}
 .field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 @media(max-width:380px){.field-row{grid-template-columns:1fr}}
 .field-explain{font-size:11px; color:var(--ink4); margin-top:5px; line-height:1.5}
@@ -215,6 +199,7 @@ input[type=range]::-webkit-slider-thumb{
   font-family:Georgia,'Times New Roman',serif; font-size:clamp(16px,3.5vw,20px);
   color:rgba(255,255,255,.8); margin-bottom:6px;
 }
+.result-tag-top{color:rgba(255,255,255,.55); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px}
 .result-price-main{
   font-family:Georgia,'Times New Roman',serif; font-size:clamp(48px,11vw,76px);
   color:#fff; line-height:1; text-shadow:0 4px 24px rgba(0,0,0,.2); margin-bottom:6px;
@@ -252,6 +237,19 @@ input[type=range]::-webkit-slider-thumb{
 .kpi .ks{font-size:11px; margin-top:5px; color:var(--ink3)}
 .kpi-min .kl{color:var(--red)} .kpi-min .kv{color:var(--red)}
 .kpi-lucro .kl{color:var(--gold)} .kpi-lucro .kv{color:var(--gold)}
+.kpi-lucro.negative .kl{color:var(--red)} .kpi-lucro.negative .kv{color:var(--red)}
+.insight-box{background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; font-size:13px; color:var(--ink2); line-height:1.5; margin-bottom:16px}
+.insight-box strong{color:var(--ink)}
+.disclaimer-box{background:#FFF7ED; border:1px solid #FDE0B0; border-radius:var(--radius); padding:16px; font-size:12.5px; color:#92400E; line-height:1.55; margin-bottom:16px}
+.disclaimer-box .dtitle{font-weight:800; margin-bottom:4px; display:flex; align-items:center; gap:6px}
+
+.planilha-teaser{background:linear-gradient(160deg,#0F4D30,#1E6B45); border-radius:var(--radius); padding:18px 20px; margin-bottom:16px; color:#fff}
+.planilha-teaser .pt-title{font-weight:800; font-size:14px; margin-bottom:6px}
+.planilha-teaser .pt-sub{font-size:12.5px; color:rgba(255,255,255,.85); line-height:1.5; margin-bottom:10px}
+.planilha-teaser .pt-sub strong{color:#fff}
+.planilha-teaser .pt-list{list-style:none; display:flex; flex-direction:column; gap:6px}
+.planilha-teaser .pt-list li{font-size:12.5px; color:rgba(255,255,255,.92); display:flex; align-items:flex-start; gap:7px}
+.planilha-teaser .pt-check{color:#6EE7B7; font-weight:800; flex-shrink:0}
 
 .section-card{
   background:var(--white); border:1px solid var(--border); border-radius:var(--radius);
@@ -329,9 +327,9 @@ input[type=range]::-webkit-slider-thumb{
 <!-- ═══════════════════════ TELA 1: LANDING ═══════════════════════ -->
 <div id="screen-landing" class="screen active">
   <div class="landing-wrap">
-    <div class="landing-badge">Simulador de Precificação</div>
-    <h1 class="landing-h1">Descubra o preço ideal<br>para o que você vende</h1>
-    <p class="landing-sub">Em poucos segundos você calcula um preço de venda considerando seus custos e sua margem de lucro.</p>
+    <div class="landing-badge">Diagnóstico de Precificação</div>
+    <h1 class="landing-h1">Você está cobrando<br>o preço certo?</h1>
+    <p class="landing-sub">Em poucos segundos você descobre se o seu preço cobre os custos e te dá lucro de verdade — ou se você está trabalhando no prejuízo sem saber.</p>
     <div class="landing-benefits">
       <div class="benefit"><div class="bi">✓</div> Gratuito</div>
       <div class="benefit"><div class="bi">✓</div> Sem cadastro</div>
@@ -380,7 +378,7 @@ input[type=range]::-webkit-slider-thumb{
           <span class="pfx">R$</span>
           <input type="text" inputmode="decimal" id="f-custo" class="pfx-input"
                  placeholder="0,00" oninput="maskMoney(this)"
-                 onkeydown="if(event.key==='Enter') document.getElementById('f-margem').focus()" />
+                 onkeydown="if(event.key==='Enter') document.getElementById('f-prod').focus()" />
         </div>
         <div class="field-err" id="err-custo">Informe quanto custa para produzir.</div>
       </div>
@@ -410,86 +408,25 @@ input[type=range]::-webkit-slider-thumb{
         </div>
       </div>
 
-      <div class="field">
-        <label>Quanto você quer ganhar sobre o custo?</label>
-        <div class="slider-wrap">
-          <input type="range" id="f-margem" min="5" max="150" value="30"
-                 oninput="document.getElementById('margem-val').textContent=this.value+'%'" />
-          <div class="slider-val" id="margem-val">30%</div>
+      <div class="field-row">
+        <div class="field">
+          <label id="lbl-prod">Quanto você produz? <span class="req">*</span> <span class="opt">(por mês)</span></label>
+          <input type="number" id="f-prod" min="1" placeholder="Ex: 40"
+                 onkeydown="if(event.key==='Enter') document.getElementById('f-preco-atual').focus()" />
+          <div class="field-err" id="err-prod">Informe quanto você produz/atende por mês.</div>
         </div>
-        <div class="slider-hint"><span>Mínimo</span><span>Ideal 30–50%</span><span>Máximo</span></div>
-      </div>
-
-      <!-- AVANÇADO -->
-      <button class="advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">
-        Quero refinar o cálculo (embalagem, custos fixos...) <span class="arrow">▾</span>
-      </button>
-      <div class="advanced-body" id="adv-body">
-        <div class="advanced-inner">
-
-          <div class="field-row only-produto">
-            <div class="field">
-              <label>Embalagem <span class="opt">por unidade</span></label>
-              <div class="pfx-wrap">
-                <span class="pfx">R$</span>
-                <input type="text" inputmode="decimal" id="f-emb" class="pfx-input" placeholder="0,00" oninput="maskMoney(this)" />
-              </div>
-            </div>
-            <div class="field">
-              <label>Rende quantas unidades?</label>
-              <input type="number" id="f-rend" min="1" value="1" />
-              <div class="field-explain">Ex: 1 bolo, 12 brigadeiros</div>
-            </div>
+        <div class="field">
+          <label id="lbl-preco-atual">Quanto você cobra? <span class="req">*</span></label>
+          <div class="pfx-wrap">
+            <span class="pfx">R$</span>
+            <input type="text" inputmode="decimal" id="f-preco-atual" class="pfx-input" placeholder="0,00" oninput="maskMoney(this)" />
           </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label>Custos fixos / mês</label>
-              <div class="pfx-wrap">
-                <span class="pfx">R$</span>
-                <input type="text" inputmode="decimal" id="f-fixos" class="pfx-input" placeholder="0,00" oninput="maskMoney(this)" />
-              </div>
-              <div class="field-explain">Aluguel, energia, internet...</div>
-            </div>
-            <div class="field">
-              <label id="lbl-prod">Produção / mês <span class="opt">(unid.)</span></label>
-              <input type="number" id="f-prod" min="1" value="50" />
-            </div>
-          </div>
-
-          <div class="field-row only-produto">
-            <div class="field">
-              <label>Tempo de preparo <span class="opt">(min)</span></label>
-              <input type="number" id="f-tempo" min="0" value="0" />
-            </div>
-            <div class="field">
-              <label>Valor da sua hora</label>
-              <div class="pfx-wrap">
-                <span class="pfx">R$</span>
-                <input type="text" inputmode="decimal" id="f-hora" class="pfx-input" placeholder="15,00" oninput="maskMoney(this)" />
-              </div>
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label id="lbl-semana">Vendas / semana <span class="opt">(projeção)</span></label>
-              <input type="number" id="f-semana" min="1" value="10" />
-            </div>
-            <div class="field">
-              <label>Meta mensal <span class="opt">opcional</span></label>
-              <div class="pfx-wrap">
-                <span class="pfx">R$</span>
-                <input type="text" inputmode="decimal" id="f-meta" class="pfx-input" placeholder="5.000,00" oninput="maskMoney(this)" />
-              </div>
-            </div>
-          </div>
-
+          <div class="field-err" id="err-preco-atual">Informe quanto você cobra hoje.</div>
         </div>
       </div>
 
       <button class="btn-calc" id="btn-calc" onclick="calcularEExibir()">
-        <span class="label">Ver o preço ideal →</span>
+        <span class="label">Ver meu diagnóstico →</span>
         <span class="loading">Calculando...</span>
       </button>
 
@@ -504,58 +441,50 @@ input[type=range]::-webkit-slider-thumb{
 <!-- ═══════════════════════ RESULTADO ═══════════════════════ -->
 <div id="screen-result" class="screen">
   <div class="result-header">
-    <h1>Preço de venda sugerido</h1>
+    <h1>Seu diagnóstico de preço</h1>
+    <div class="result-tag-top">Você cobra</div>
     <div class="result-price-main" id="res-preco-main"><sub>R$</sub>—</div>
     <div class="result-tag" id="res-tag">calculando...</div>
     <div class="result-produto-nome" id="res-nome"></div>
   </div>
 
   <div class="result-body">
+    <div class="planilha-teaser">
+      <div class="pt-title">📊 Isso foi só uma simulação simplificada</div>
+      <p class="pt-sub">A <strong>Planilha de Precificação Inteligente</strong> calcula o preço certo de verdade, considerando:</p>
+      <ul class="pt-list">
+        <li><span class="pt-check">✓</span> Custos fixos rateados automaticamente</li>
+        <li><span class="pt-check">✓</span> Impostos e taxas de cartão</li>
+        <li><span class="pt-check">✓</span> Todos os seus produtos/serviços, não só um</li>
+        <li><span class="pt-check">✓</span> Dashboard visual com sua margem real</li>
+      </ul>
+    </div>
+
     <div id="res-status-badge"></div>
 
     <div class="result-kpis">
       <div class="kpi kpi-min">
-        <div class="kl">Preço Mínimo</div>
+        <div class="kl">Seu Custo</div>
         <div class="kv" id="res-preco-min">—</div>
-        <div class="ks">seu ponto de equilíbrio</div>
+        <div class="ks">por unidade/atendimento</div>
       </div>
       <div class="kpi kpi-lucro">
-        <div class="kl">Lucro / Unidade</div>
+        <div class="kl">Lucro Real</div>
         <div class="kv" id="res-lucro-un">—</div>
         <div class="ks">por unidade vendida</div>
       </div>
     </div>
 
-    <div class="section-card">
-      <h3>Composição do custo — <span id="res-custo-label">R$ —</span></h3>
-      <div id="res-breakdown"></div>
-    </div>
+    <div id="res-insight-box"></div>
 
-    <div class="section-card">
-      <h3>Projeção de lucro</h3>
-      <div class="proj-grid">
-        <div class="proj-card">
-          <div class="pl">Fat. Semanal</div><div class="pv" id="pv-fat-sem">—</div><div class="ps" id="ps-fat-sem"></div>
-        </div>
-        <div class="proj-card">
-          <div class="pl">Lucro Semanal</div><div class="pv" id="pv-lucro-sem">—</div><div class="ps" id="ps-lucro-sem"></div>
-        </div>
-        <div class="proj-card">
-          <div class="pl">Fat. Mensal</div><div class="pv" id="pv-fat-mes">—</div><div class="ps" id="ps-fat-mes"></div>
-        </div>
-        <div class="proj-card">
-          <div class="pl">Lucro Mensal</div><div class="pv" id="pv-lucro-mes">—</div><div class="ps" id="ps-lucro-mes"></div>
-        </div>
-        <div class="proj-card proj-card-hl">
-          <div class="pl">Lucro Anual Projetado</div><div class="pv" id="pv-lucro-ano">—</div><div class="ps" id="ps-lucro-ano"></div>
-        </div>
-      </div>
-      <div id="res-meta-box"></div>
+    <div class="disclaimer-box">
+      <div class="dtitle">⚠️ O que não entrou nessa conta</div>
+      <span id="disclaimer-txt">Esse resultado não considera coisas importantes como impostos, taxas de cartão, sazonalidade e todos os seus custos fixos reais — que podem mudar bastante esse número.</span>
     </div>
 
     <div class="cta-card">
-      <h3 id="cta-titulo">Quer calcular o preço de todos os seus produtos?</h3>
-      <p>A Planilha de Precifica&ccedil;&atilde;o Inteligente tem 9 abas completas, dashboard visual e simulador integrado.</p>
+      <h3 id="cta-titulo">Quer saber o preço certo de todos os seus produtos?</h3>
+      <p>A Planilha de Precifica&ccedil;&atilde;o Inteligente calcula tudo isso automaticamente — impostos, taxas, custos fixos e mais — em 9 abas completas com dashboard visual.</p>
       <a href="javascript:void(0)" class="btn-cta-planilha" onclick="irParaWhatsapp()">Conhecer a Planilha Premium →</a>
     </div>
 
@@ -603,7 +532,7 @@ var fieldsTouched = {};   // rastreia quais campos foram preenchidos
 var lastFieldFocused = null;
 var maxFieldReached = '';  // último campo que o usuário alcançou (para saber onde desistiu)
 
-var FIELD_ORDER = ['f-nome','f-custo','f-tempo-serv','f-hora-serv','f-custo-mat','f-margem','f-emb','f-rend','f-fixos','f-prod','f-tempo','f-hora','f-semana','f-meta'];
+var FIELD_ORDER = ['f-nome','f-custo','f-tempo-serv','f-hora-serv','f-custo-mat','f-prod','f-preco-atual'];
 var tipoNegocio = null; // 'produto' | 'servico' — definido na landing
 
 // ── ANALYTICS ──────────────────────────────────────────
@@ -712,19 +641,6 @@ function flashField(id) {
   setTimeout(function(){ el.classList.remove('has-error'); }, 2200);
 }
 
-// ── TOGGLE AVANÇADO ────────────────────────────────────
-function toggleAdvanced() {
-  var body = document.getElementById('adv-body');
-  var btn  = document.getElementById('adv-toggle');
-  var opening = !body.classList.contains('open');
-  body.classList.toggle('open');
-  btn.classList.toggle('open');
-  if (opening && !advancedOpened) {
-    advancedOpened = true;
-    track('advanced_fields_opened');
-  }
-}
-
 // ── SEGMENTAÇÃO: PRODUTO x SERVIÇO ──────────────────────
 function selecionarSegmento(tipo) {
   tipoNegocio = tipo;
@@ -738,20 +654,18 @@ function aplicarSegmento(tipo) {
   document.body.classList.add('tipo-' + tipo);
 
   if (tipo === 'servico') {
-    document.getElementById('hero-h1').innerHTML = 'Descubra o preço ideal<br>para o seu serviço';
+    document.getElementById('hero-h1').innerHTML = 'Você está cobrando<br>o preço certo pelo seu serviço?';
     document.getElementById('lbl-nome').innerHTML = 'Qual serviço você presta? <span class="req">*</span>';
     document.getElementById('f-nome').placeholder = 'Ex: Corte de cabelo, Consultoria';
-    document.getElementById('lbl-prod').innerHTML = 'Atendimentos / mês <span class="opt">(qtd.)</span>';
-    document.getElementById('lbl-semana').innerHTML = 'Atendimentos / semana <span class="opt">(projeção)</span>';
-    setEl('cta-titulo', 'Quer calcular o preço de todos os seus serviços?');
+    document.getElementById('lbl-prod').innerHTML = 'Quantos atendimentos você faz? <span class="req">*</span> <span class="opt">(por mês)</span>';
+    setEl('cta-titulo', 'Quer saber o preço certo de todos os seus serviços?');
     setEl('btn-recalc', '↩ Simular outro serviço');
   } else {
-    document.getElementById('hero-h1').innerHTML = 'Descubra o preço ideal<br>para o seu produto';
+    document.getElementById('hero-h1').innerHTML = 'Você está cobrando<br>o preço certo pelo seu produto?';
     document.getElementById('lbl-nome').innerHTML = 'O que você vende? <span class="req">*</span>';
     document.getElementById('f-nome').placeholder = 'Ex: Bolo de Cenoura';
-    document.getElementById('lbl-prod').innerHTML = 'Produção / mês <span class="opt">(unid.)</span>';
-    document.getElementById('lbl-semana').innerHTML = 'Vendas / semana <span class="opt">(projeção)</span>';
-    setEl('cta-titulo', 'Quer calcular o preço de todos os seus produtos?');
+    document.getElementById('lbl-prod').innerHTML = 'Quanto você produz? <span class="req">*</span> <span class="opt">(por mês)</span>';
+    setEl('cta-titulo', 'Quer saber o preço certo de todos os seus produtos?');
     setEl('btn-recalc', '↩ Simular outro produto');
   }
 }
@@ -796,6 +710,16 @@ function validar() {
     } else clearErr('err-custo');
   }
 
+  if (numVal('f-prod') <= 0) {
+    showErr('err-prod', 'Informe quanto você produz/atende por mês.');
+    flashField('f-prod'); ok = false;
+  } else clearErr('err-prod');
+
+  if (numVal('f-preco-atual') <= 0) {
+    showErr('err-preco-atual', 'Informe quanto você cobra hoje.');
+    flashField('f-preco-atual'); ok = false;
+  } else clearErr('err-preco-atual');
+
   return ok;
 }
 
@@ -831,7 +755,8 @@ function calcularEExibir() {
       var timeToResult = Math.round((Date.now()-sessionStart)/1000);
       track('result_view', {
         produto: results.nome,
-        preco: results.preco_sug ? results.preco_sug.toFixed(2) : '0',
+        preco: results.preco_atual ? results.preco_atual.toFixed(2) : '0',
+        margem_real: results.margem ? Math.round(results.margem) : 0,
         lucro_mes: results.lucro_mes ? results.lucro_mes.toFixed(2) : '0',
         time_until_result: timeToResult,
         advanced_used: advancedOpened
@@ -845,50 +770,40 @@ function calcularEExibir() {
 
 function calcular() {
   var nome    = v('f-nome').trim();
-  var rend, emb, ing, tempo, hora;
+  var ing;
 
   if (tipoNegocio === 'servico') {
-    ing   = numVal('f-custo-mat');   // materiais (opcional) entram como "ingredientes"
-    rend  = 1;                        // serviço não tem lote/rendimento
-    emb   = 0;                        // embalagem não se aplica
-    tempo = numVal('f-tempo-serv');
-    hora  = numVal('f-hora-serv');
+    ing = numVal('f-custo-mat');   // materiais (opcional), referentes a UM atendimento
   } else {
-    ing   = numVal('f-custo');
-    rend  = Math.max(1, numVal('f-rend') || 1);
-    emb   = numVal('f-emb');
-    tempo = numVal('f-tempo');
-    hora  = numVal('f-hora');
+    ing = numVal('f-custo');
   }
 
-  var fixos   = numVal('f-fixos');
-  var prod    = Math.max(1, numVal('f-prod') || 50);
-  var margem  = numVal('f-margem') || 30;
-  var semana  = Math.max(1, numVal('f-semana') || 10);
-  var metaRaw = numVal('f-meta');
-  var metaMes = metaRaw > 0 ? metaRaw : 0;
+  var tempo = numVal('f-tempo-serv');
+  var hora  = numVal('f-hora-serv');
+  var prod    = Math.max(1, numVal('f-prod') || 1);
+  var precoAtual = numVal('f-preco-atual');
 
-  var custo_mao    = ((tempo/60)*hora)/rend;
-  var custo_fixo   = fixos/prod;
-  var custo_ing_un = ing/rend;
-  var custo_emb_un = emb;
+  // Para produto: o custo informado é o total gasto pra produzir a quantidade "prod"
+  // — por isso dividimos por prod para chegar no valor por unidade.
+  // Para serviço: tempo/hora e materiais já são referentes a UM atendimento, sem divisão.
+  var divisorCusto = (tipoNegocio === 'servico') ? 1 : prod;
 
-  var custo_total = custo_ing_un + custo_mao + custo_fixo + custo_emb_un;
-  var preco_sug   = custo_total * (1 + margem/100);
-  var lucro_un    = preco_sug - custo_total;
+  var custo_mao    = (tipoNegocio === 'servico') ? ((tempo/60)*hora) : 0;
+  var custo_ing_un = ing/divisorCusto;
 
-  var fat_sem   = semana * preco_sug;
-  var fat_mes   = semana * 4 * preco_sug;
-  var lucro_mes = semana * 4 * lucro_un;
+  var custo_total = custo_ing_un + custo_mao;
+  var lucro_un    = precoAtual - custo_total;
+  var margem_real = custo_total > 0 ? (lucro_un/custo_total*100) : 0;
+  var preco_ideal = custo_total * 1.35; // referência: markup de 35%, meio da faixa saudável (30-50%)
+
+  var lucro_mes = prod * lucro_un;
   var lucro_ano = lucro_mes * 12;
-  var vendas_meta = metaMes > 0 ? Math.ceil(metaMes/preco_sug) : 0;
 
   results = {
-    nome: nome, rend: rend, ing: custo_ing_un, mao: custo_mao,
-    fixo: custo_fixo, emb: custo_emb_un, custo_total: custo_total,
-    preco_sug: preco_sug, lucro_un: lucro_un, margem: margem,
-    fat_sem: fat_sem, fat_mes: fat_mes, lucro_mes: lucro_mes,
-    lucro_ano: lucro_ano, semana: semana, metaMes: metaMes, vendas_meta: vendas_meta
+    nome: nome, ing: custo_ing_un, mao: custo_mao,
+    custo_total: custo_total,
+    preco_atual: precoAtual, preco_ideal: preco_ideal, lucro_un: lucro_un, margem: margem_real,
+    lucro_mes: lucro_mes, lucro_ano: lucro_ano, prod: prod
   };
 }
 
@@ -898,61 +813,36 @@ function renderResultado() {
   var num = function(val) { return (typeof val==='number' && isFinite(val)) ? val : 0; };
 
   document.getElementById('res-preco-main').innerHTML = '<sub>R$</sub>' +
-    num(r.preco_sug).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-  setEl('res-tag', 'com ' + r.margem + '% de lucro sobre o custo');
-  setEl('res-nome', r.nome + (r.rend>1 ? ' — lote de '+r.rend+' unidades' : ''));
+    num(r.preco_atual).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 
   var st = getStatus(r.margem);
+  setEl('res-tag', st.tag);
+  setEl('res-nome', r.nome);
+
   document.getElementById('res-status-badge').innerHTML =
     '<div class="status-badge '+st.cls+'"><div class="dot"></div>'+st.txt+'</div>';
 
   setEl('res-preco-min', brl(r.custo_total));
   setEl('res-lucro-un', brl(r.lucro_un));
+  var kpiLucroEl = document.querySelector('.kpi-lucro');
+  if (kpiLucroEl) kpiLucroEl.classList.toggle('negative', r.lucro_un < 0);
 
-  setEl('res-custo-label', brl(r.custo_total));
-  var total = r.custo_total || 1;
-  var labelIng = tipoNegocio === 'servico' ? 'Materiais' : 'Ingredientes';
-  var bdRows = [
-    {name:labelIng,        val:r.ing,  color:'#2563EB'},
-    {name:'Mao de Obra',  val:r.mao,  color:'#7C3AED'},
-    {name:'Custos Fixos', val:r.fixo, color:'#059669'},
-    {name:'Embalagem',    val:r.emb,  color:'#D97706'},
-  ].filter(function(row){ return row.val > 0; });
+  // Caixa de insight: compara o que a pessoa cobra com uma faixa saudável
+  var insightBox = document.getElementById('res-insight-box');
+  if (r.margem < 15) {
+    insightBox.innerHTML = '<div class="insight-box">Para ter uma margem saudável (em torno de 30%), o preço mínimo indicado seria <strong>'+brl(r.preco_ideal)+'</strong> — hoje você cobra <strong>'+brl(r.preco_atual)+'</strong>.</div>';
+  } else {
+    insightBox.innerHTML = '<div class="insight-box">Seu preço atual já está numa faixa considerada saudável para o seu custo. 👏</div>';
+  }
 
-  var bdHtml = bdRows.map(function(row) {
-    var pct = Math.round(row.val/total*100);
-    return '<div class="bd-row"><div class="bd-name">'+row.name+'</div>'+
-      '<div class="bd-track"><div class="bd-fill" style="width:'+pct+'%;background:'+row.color+'"></div></div>'+
-      '<div class="bd-pct">'+pct+'%</div><div class="bd-val">'+brl(row.val)+'</div></div>';
-  }).join('');
-  bdHtml += '<div class="bd-total"><span>Custo total / unidade</span><span>'+brl(r.custo_total)+'</span></div>';
-  document.getElementById('res-breakdown').innerHTML = bdHtml;
-
-  var sem = Math.max(1, num(r.semana));
-  setEl('pv-fat-sem', brl(r.fat_sem));
-  setEl('ps-fat-sem', sem+' un/semana');
-  setEl('pv-lucro-sem', brl(num(r.lucro_un)*sem));
-  setEl('ps-lucro-sem', sem+' un x '+brl(r.lucro_un));
-  setEl('pv-fat-mes', brl(r.fat_mes));
-  setEl('ps-fat-mes', (sem*4)+' un/mes');
-  setEl('pv-lucro-mes', brl(r.lucro_mes));
-  setEl('ps-lucro-mes', 'com '+num(r.margem)+'% de lucro');
-  setEl('pv-lucro-ano', brl(r.lucro_ano));
-  setEl('ps-lucro-ano', 'mantendo '+sem+' un/semana');
-
-  var metaBox = document.getElementById('res-meta-box');
-  if (r.metaMes > 0 && r.vendas_meta > 0) {
-    metaBox.innerHTML = '<div class="goal-box">Para faturar <strong>R$ '+
-      num(r.metaMes).toLocaleString('pt-BR',{minimumFractionDigits:2})+' por mes</strong>, voce precisa vender '+
-      '<strong>'+r.vendas_meta+' unidades por mes</strong> ('+Math.ceil(r.vendas_meta/4)+' por semana).</div>';
-  } else { metaBox.innerHTML = ''; }
 }
 
 function getStatus(m) {
-  if (m>=50) return {cls:'sb-great', txt:'Alta margem — otimo!'};
-  if (m>=30) return {cls:'sb-ok', txt:'Margem ideal — saudavel'};
-  if (m>=15) return {cls:'sb-low', txt:'Margem baixa — cuidado'};
-  return {cls:'sb-bad', txt:'Margem muito baixa — risco de prejuizo'};
+  if (m < 0)   return {cls:'sb-bad',   txt:'Você está no prejuízo',           tag:'prejuízo de '+Math.abs(Math.round(m))+'% sobre o custo'};
+  if (m < 15)  return {cls:'sb-low',   txt:'Margem apertada — atenção',       tag:'apenas '+Math.round(m)+'% de lucro sobre o custo'};
+  if (m < 30)  return {cls:'sb-low',   txt:'Dentro da média, dá pra melhorar',tag:Math.round(m)+'% de lucro sobre o custo'};
+  if (m < 50)  return {cls:'sb-ok',    txt:'Margem saudável',                 tag:Math.round(m)+'% de lucro sobre o custo'};
+  return           {cls:'sb-great', txt:'Ótima margem',                    tag:Math.round(m)+'% de lucro sobre o custo'};
 }
 
 // ── AÇÕES ──────────────────────────────────────────────
@@ -979,16 +869,12 @@ function capturarLead() {
 function pularLead() { document.querySelector('.lead-section').style.display = 'none'; }
 
 function reiniciar() {
-  results = {}; sessionStart = Date.now(); advancedOpened = false;
+  results = {}; sessionStart = Date.now();
   fieldsTouched = {}; lastFieldFocused = null; maxFieldReached = '';
   formOpenTime = Date.now();
-  ['f-nome','f-custo','f-emb','f-fixos','f-meta','f-tempo-serv','f-hora-serv','f-custo-mat'].forEach(function(id){
+  ['f-nome','f-custo','f-tempo-serv','f-hora-serv','f-custo-mat','f-prod','f-preco-atual'].forEach(function(id){
     var el = document.getElementById(id); if (el) el.value = '';
   });
-  var advBody = document.getElementById('adv-body');
-  var advBtn = document.getElementById('adv-toggle');
-  if (advBody) advBody.classList.remove('open');
-  if (advBtn) advBtn.classList.remove('open');
   document.getElementById('lead-form').style.display = 'flex';
   document.getElementById('lead-ok').style.display = 'none';
   var skip = document.querySelector('.btn-skip'); if (skip) skip.style.display = '';
@@ -1004,9 +890,9 @@ function saveLead(nome, wpp) {
   var num = function(v){ return (typeof v==='number' && isFinite(v)) ? v : 0; };
   var lead = {
     id: Date.now(), nome: nome, wpp: wpp, produto: r.nome||'-', segmento: tipoNegocio||'-',
-    preco: brl(r.preco_sug), custo: brl(r.custo_total), lucro_un: brl(r.lucro_un),
+    preco: brl(r.preco_atual), custo: brl(r.custo_total), lucro_un: brl(r.lucro_un),
     lucro_mes: brl(r.lucro_mes), lucro_ano: brl(r.lucro_ano),
-    margem: num(r.margem)+'%', semana: num(r.semana), data: new Date().toLocaleString('pt-BR')
+    margem: num(r.margem)+'%', prod: num(r.prod), data: new Date().toLocaleString('pt-BR')
   };
   var leads = JSON.parse(localStorage.getItem('sim_leads')||'[]');
   leads.push(lead);
@@ -1059,15 +945,8 @@ function clearLeads() { if (confirm('Apagar todos os leads?')) { localStorage.re
   trackFieldFill('f-tempo-serv', 'Tempo do servico');
   trackFieldFill('f-hora-serv',  'Valor da hora (servico)');
   trackFieldFill('f-custo-mat',  'Custo de materiais (servico)');
-  trackFieldFill('f-margem',     'Margem desejada');
-  trackFieldFill('f-emb',        'Embalagem');
-  trackFieldFill('f-rend',       'Rendimento');
-  trackFieldFill('f-fixos',      'Custos fixos');
   trackFieldFill('f-prod',       'Producao/atendimentos mensal');
-  trackFieldFill('f-tempo',      'Tempo de preparo');
-  trackFieldFill('f-hora',       'Valor da hora');
-  trackFieldFill('f-semana',     'Vendas/atendimentos por semana');
-  trackFieldFill('f-meta',       'Meta mensal');
+  trackFieldFill('f-preco-atual','Preco cobrado atualmente');
 
   track('simulator_loaded');
   track('landing_view');
